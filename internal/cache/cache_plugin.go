@@ -1,8 +1,9 @@
 package cache
 
 import (
-	"github.com/evanw/esbuild/internal/config"
 	"sync"
+
+	"github.com/evanw/esbuild/internal/config"
 )
 
 type PluginCache struct {
@@ -22,5 +23,7 @@ func (c *PluginCache) GetLoadCache(path string) *config.OnLoadResult {
 }
 
 func (c *PluginCache) SetLoadCache(path string, res *config.OnLoadResult) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
 	c.loadEntries[path] = res
 }
