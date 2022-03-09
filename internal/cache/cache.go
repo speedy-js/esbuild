@@ -60,7 +60,8 @@ func MakeCacheSet() *CacheSet {
 			entries: make(map[logger.Path]*jsCacheEntry),
 		},
 		PluginCache: PluginCache{
-			loadEntries: make(map[string]*config.OnLoadResult),
+			loadEntries:    make(map[string]*config.OnLoadResult),
+			resolveEntries: make(map[string]*config.OnResolveResult),
 		},
 	}
 }

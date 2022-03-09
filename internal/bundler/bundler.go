@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base32"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"net/http"
@@ -408,6 +409,7 @@ func parseFile(args parseArgs) {
 					record.Kind,
 					absResolveDir,
 					pluginData,
+					&args.caches.PluginCache,
 				)
 				cache[record.Path.Text] = resolveResult
 
@@ -706,6 +708,7 @@ func RunOnResolvePlugins(
 	kind ast.ImportKind,
 	absResolveDir string,
 	pluginData interface{},
+	pluginCache *cache.PluginCache,
 ) (*resolver.ResolveResult, bool, resolver.DebugMeta) {
 	resolverArgs := config.OnResolveArgs{
 		Path:       path,
@@ -727,7 +730,20 @@ func RunOnResolvePlugins(
 				continue
 			}
 
-			result := onResolve.Callback(resolverArgs)
+			var result config.OnResolveResult
+			str, err := json.Marshal(resolverArgs)
+			if err != nil {
+				result = onResolve.Callback(resolverArgs)
+			} else {
+				resolveCacheRes := pluginCache.GetResolveCache(string(str))
+				if resolveCacheRes != nil {
+					result = *resolveCacheRes
+				} else {
+					result = onResolve.Callback(resolverArgs)
+					pluginCache.SetResolveCache(string(str), &result)
+				}
+			}
+
 			pluginName := result.PluginName
 			if pluginName == "" {
 				pluginName = plugin.Name
@@ -1467,6 +1483,7 @@ func (s *scanner) addEntryPoints(entryPoints []EntryPoint) []graph.EntryPoint {
 				ast.ImportEntryPoint,
 				entryPointAbsResolveDir,
 				nil,
+				&s.caches.PluginCache,
 			)
 			if resolveResult != nil {
 				if resolveResult.IsExternal {

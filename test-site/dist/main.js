@@ -20425,7 +20425,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
 
   // src/component/Child/index.tsx
   var import_react = __toESM(require_react());
-  console.log(1646733937487);
+  console.log(1646849766669);
   var Child = class extends import_react.default.Component {
     render() {
       return /* @__PURE__ */ import_react.default.createElement("div", {
@@ -20435,7 +20435,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
   };
 
   // src/index.tsx
-  console.log(1646733937486);
+  console.log(1646849773476);
   var Page = class extends import_react2.default.Component {
     render() {
       return /* @__PURE__ */ import_react2.default.createElement("div", {

@@ -1,4 +1,4 @@
-import {loadPlugin} from '../plugin'
+import {loadPlugin, resolvePlugin} from '../plugin'
 import fs from 'fs';
 import path from 'path';
 
@@ -15,7 +15,7 @@ async function exec() {
     // watch: true,
     incremental: true,
     sourcemap: true,
-    plugins: [loadPlugin]
+    plugins: [loadPlugin, resolvePlugin]
   });
 
   const file_paths = [
