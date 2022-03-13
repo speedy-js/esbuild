@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"os"
 	"regexp"
+	"runtime/pprof"
 	"sort"
 	"strconv"
 	"strings"
@@ -887,6 +888,25 @@ func rebuildImpl(
 	log logger.Log,
 	isRebuild bool,
 ) internalBuildResult {
+	// 增加profile 控制
+	isCPUPprof := false
+	profileValue := os.Getenv("ESBUILD_PROFILE")
+	if profileValue == "true" {
+		isCPUPprof = true
+	}
+	if isCPUPprof {
+		flag := "./esbuild_cpu_"
+		flag += strconv.FormatInt(time.Now().Unix(), 10)
+		flag += ".pprof"
+		file, err := os.Create(flag)
+		if err != nil {
+			fmt.Printf("create cpu pprof failed, err:%v\n", err)
+		} else {
+			pprof.StartCPUProfile(file)
+			defer pprof.StopCPUProfile()
+		}
+	}
+
 	// Convert and validate the buildOpts
 	realFS, err := fs.RealFS(fs.RealFSOptions{
 		AbsWorkingDir: buildOpts.AbsWorkingDir,
