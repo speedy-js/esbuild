@@ -7,7 +7,7 @@
 import * as types from "./types";
 
 export interface BuildRequest {
-  command: 'build';
+  command: "build";
   key: number;
   entries: [string, string][]; // Use an array instead of a map to preserve order
   flags: string[];
@@ -34,14 +34,14 @@ export interface ServeResponse {
 }
 
 export interface ServeStopRequest {
-  command: 'serve-stop';
+  command: "serve-stop";
   key: number;
 }
 
 export interface BuildPlugin {
   name: string;
-  onResolve: { id: number, filter: string, namespace: string }[];
-  onLoad: { id: number, filter: string, namespace: string }[];
+  onResolve: { id: number; filter: string; namespace: string }[];
+  onLoad: { id: number; filter: string; namespace: string }[];
 }
 
 export interface BuildResponse {
@@ -61,44 +61,45 @@ export interface BuildOutputFile {
 }
 
 export interface PingRequest {
-  command: 'ping';
+  command: "ping";
 }
 
 export interface RebuildRequest {
-  command: 'rebuild';
+  command: "rebuild";
   key: number;
+  changefile: string[];
 }
 
 export interface RebuildDisposeRequest {
-  command: 'rebuild-dispose';
+  command: "rebuild-dispose";
   key: number;
 }
 
 export interface WatchStopRequest {
-  command: 'watch-stop';
+  command: "watch-stop";
   key: number;
 }
 
 export interface OnRequestRequest {
-  command: 'serve-request';
+  command: "serve-request";
   key: number;
   args: types.ServeOnRequestArgs;
 }
 
 export interface OnWaitRequest {
-  command: 'serve-wait';
+  command: "serve-wait";
   key: number;
   error: string | null;
 }
 
 export interface OnWatchRebuildRequest {
-  command: 'watch-rebuild';
+  command: "watch-rebuild";
   key: number;
   args: types.BuildResult;
 }
 
 export interface TransformRequest {
-  command: 'transform';
+  command: "transform";
   flags: string[];
   input: string;
   inputFS: boolean;
@@ -119,7 +120,7 @@ export interface TransformResponse {
 }
 
 export interface FormatMsgsRequest {
-  command: 'format-msgs';
+  command: "format-msgs";
   messages: types.Message[];
   isWarning: boolean;
   color?: boolean;
@@ -131,7 +132,7 @@ export interface FormatMsgsResponse {
 }
 
 export interface AnalyzeMetafileRequest {
-  command: 'analyze-metafile';
+  command: "analyze-metafile";
   metafile: string;
   color?: boolean;
   verbose?: boolean;
@@ -142,7 +143,7 @@ export interface AnalyzeMetafileResponse {
 }
 
 export interface OnStartRequest {
-  command: 'on-start';
+  command: "on-start";
   key: number;
 }
 
@@ -152,7 +153,7 @@ export interface OnStartResponse {
 }
 
 export interface ResolveRequest {
-  command: 'resolve';
+  command: "resolve";
   key: number;
   path: string;
   pluginName: string;
@@ -176,7 +177,7 @@ export interface ResolveResponse {
 }
 
 export interface OnResolveRequest {
-  command: 'on-resolve';
+  command: "on-resolve";
   key: number;
   ids: number[];
   path: string;
@@ -208,7 +209,7 @@ export interface OnResolveResponse {
 }
 
 export interface OnLoadRequest {
-  command: 'on-load';
+  command: "on-load";
   key: number;
   ids: number[];
   path: string;
@@ -250,19 +251,19 @@ export type Value =
   | string
   | Uint8Array
   | Value[]
-  | { [key: string]: Value }
+  | { [key: string]: Value };
 
 export function encodePacket(packet: Packet): Uint8Array {
   let visit = (value: Value) => {
     if (value === null) {
       bb.write8(0);
-    } else if (typeof value === 'boolean') {
+    } else if (typeof value === "boolean") {
       bb.write8(1);
       bb.write8(+value);
-    } else if (typeof value === 'number') {
+    } else if (typeof value === "number") {
       bb.write8(2);
       bb.write32(value | 0);
-    } else if (typeof value === 'string') {
+    } else if (typeof value === "string") {
       bb.write8(3);
       bb.write(encodeUTF8(value));
     } else if (value instanceof Uint8Array) {
@@ -285,7 +286,7 @@ export function encodePacket(packet: Packet): Uint8Array {
     }
   };
 
-  let bb = new ByteBuffer;
+  let bb = new ByteBuffer();
   bb.write32(0); // Reserve space for the length
   bb.write32((packet.id << 1) | +!packet.isRequest);
   visit(packet.value);
@@ -306,7 +307,8 @@ export function decodePacket(bytes: Uint8Array): Packet {
         return decodeUTF8(bb.read());
       case 4: // Uint8Array
         return bb.read();
-      case 5: { // Value[]
+      case 5: {
+        // Value[]
         let count = bb.read32();
         let value: Value[] = [];
         for (let i = 0; i < count; i++) {
@@ -314,7 +316,8 @@ export function decodePacket(bytes: Uint8Array): Packet {
         }
         return value;
       }
-      case 6: { // { [key: string]: Value }
+      case 6: {
+        // { [key: string]: Value }
         let count = bb.read32();
         let value: { [key: string]: Value } = {};
         for (let i = 0; i < count; i++) {
@@ -323,7 +326,7 @@ export function decodePacket(bytes: Uint8Array): Packet {
         return value;
       }
       default:
-        throw new Error('Invalid packet');
+        throw new Error("Invalid packet");
     }
   };
 
@@ -333,7 +336,7 @@ export function decodePacket(bytes: Uint8Array): Packet {
   id >>>= 1;
   let value = visit();
   if (bb.ptr !== bytes.length) {
-    throw new Error('Invalid packet');
+    throw new Error("Invalid packet");
   }
   return { id, isRequest, value };
 }
@@ -342,8 +345,7 @@ class ByteBuffer {
   len = 0;
   ptr = 0;
 
-  constructor(public buf = new Uint8Array(1024)) {
-  }
+  constructor(public buf = new Uint8Array(1024)) {}
 
   private _write(delta: number): number {
     if (this.len + delta > this.buf.length) {
@@ -373,7 +375,7 @@ class ByteBuffer {
 
   private _read(delta: number): number {
     if (this.ptr + delta > this.buf.length) {
-      throw new Error('Invalid packet');
+      throw new Error("Invalid packet");
     }
     this.ptr += delta;
     return this.ptr - delta;
@@ -396,20 +398,20 @@ class ByteBuffer {
   }
 }
 
-export let encodeUTF8: (text: string) => Uint8Array
-export let decodeUTF8: (bytes: Uint8Array) => string
+export let encodeUTF8: (text: string) => Uint8Array;
+export let decodeUTF8: (bytes: Uint8Array) => string;
 
 // For the browser and node 12.x
-if (typeof TextEncoder !== 'undefined' && typeof TextDecoder !== 'undefined') {
+if (typeof TextEncoder !== "undefined" && typeof TextDecoder !== "undefined") {
   let encoder = new TextEncoder();
   let decoder = new TextDecoder();
-  encodeUTF8 = text => encoder.encode(text);
-  decodeUTF8 = bytes => decoder.decode(bytes);
+  encodeUTF8 = (text) => encoder.encode(text);
+  decodeUTF8 = (bytes) => decoder.decode(bytes);
 }
 
 // For node 10.x
-else if (typeof Buffer !== 'undefined') {
-  encodeUTF8 = text => {
+else if (typeof Buffer !== "undefined") {
+  encodeUTF8 = (text) => {
     let buffer: Uint8Array = Buffer.from(text);
 
     // The test framework called "Jest" breaks node's Buffer API. Normally
@@ -426,24 +428,28 @@ else if (typeof Buffer !== 'undefined') {
 
     return buffer;
   };
-  decodeUTF8 = bytes => {
+  decodeUTF8 = (bytes) => {
     let { buffer, byteOffset, byteLength } = bytes;
     return Buffer.from(buffer, byteOffset, byteLength).toString();
-  }
-}
-
-else {
-  throw new Error('No UTF-8 codec found');
+  };
+} else {
+  throw new Error("No UTF-8 codec found");
 }
 
 export function readUInt32LE(buffer: Uint8Array, offset: number): number {
-  return buffer[offset++] |
+  return (
+    buffer[offset++] |
     (buffer[offset++] << 8) |
     (buffer[offset++] << 16) |
-    (buffer[offset++] << 24);
+    (buffer[offset++] << 24)
+  );
 }
 
-function writeUInt32LE(buffer: Uint8Array, value: number, offset: number): void {
+function writeUInt32LE(
+  buffer: Uint8Array,
+  value: number,
+  offset: number
+): void {
   buffer[offset++] = value;
   buffer[offset++] = value >> 8;
   buffer[offset++] = value >> 16;

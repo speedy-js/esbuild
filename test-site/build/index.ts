@@ -25,7 +25,7 @@ async function exec() {
 
   file_paths.forEach(f => {
     fs.watch(f, () => {
-      res.rebuild();
+      res.rebuild(file_paths);
     })
   })
 
