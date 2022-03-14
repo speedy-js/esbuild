@@ -23,3 +23,4 @@
 bin
 esbuild.exe
 node_modules/
+test-site/dist/
