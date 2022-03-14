@@ -368,6 +368,8 @@ export interface OnResolveResult {
   suffix?: string;
   pluginData?: any;
 
+  cacheEnable?: boolean;
+
   watchFiles?: string[];
   watchDirs?: string[];
 }

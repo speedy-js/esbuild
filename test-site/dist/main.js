@@ -20425,7 +20425,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
 
   // src/component/Child/index.tsx
   var import_react = __toESM(require_react());
-  console.log(1647245504272);
+  console.log(1647247172308);
   var Child = class extends import_react.default.Component {
     render() {
       return /* @__PURE__ */ import_react.default.createElement("div", {
@@ -20435,12 +20435,12 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
   };
 
   // src/index.tsx
-  console.log(1647245532380);
+  console.log(1647247190470);
   var Page = class extends import_react2.default.Component {
     render() {
       return /* @__PURE__ */ import_react2.default.createElement("div", {
         className: "test"
-      }, /* @__PURE__ */ import_react2.default.createElement("div", null, "Page"), /* @__PURE__ */ import_react2.default.createElement(Child, null));
+      }, /* @__PURE__ */ import_react2.default.createElement("div", null, "Page123"), /* @__PURE__ */ import_react2.default.createElement(Child, null));
     }
   };
   import_react_dom.default.render(/* @__PURE__ */ import_react2.default.createElement(Page, null), document.getElementById("root"));

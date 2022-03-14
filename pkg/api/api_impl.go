@@ -1637,6 +1637,7 @@ func (impl *pluginImpl) onResolve(options OnResolveOptions, callback func(OnReso
 				PluginData: args.PluginData,
 			})
 			result.PluginName = response.PluginName
+			result.CacheEnable = response.CacheEnable
 			result.AbsWatchFiles = impl.validatePathsArray(response.WatchFiles, "watch file")
 			result.AbsWatchDirs = impl.validatePathsArray(response.WatchDirs, "watch directory")
 

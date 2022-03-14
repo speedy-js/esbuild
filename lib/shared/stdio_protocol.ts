@@ -201,6 +201,8 @@ export interface OnResolveResponse {
   suffix?: string;
   pluginData?: number;
 
+  cacheEnable?: boolean;
+
   watchFiles?: string[];
   watchDirs?: string[];
 }

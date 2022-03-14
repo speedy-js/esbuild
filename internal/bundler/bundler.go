@@ -736,7 +736,7 @@ func RunOnResolvePlugins(
 				result = onResolve.Callback(resolverArgs)
 			} else {
 				resolveCacheRes := pluginCache.GetResolveCache(string(str))
-				if resolveCacheRes != nil {
+				if resolveCacheRes != nil && resolveCacheRes.CacheEnable != false {
 					result = *resolveCacheRes
 				} else {
 					result = onResolve.Callback(resolverArgs)

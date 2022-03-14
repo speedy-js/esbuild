@@ -877,6 +877,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
                 let external = getFlag(result, keys, 'external', mustBeBoolean);
                 let sideEffects = getFlag(result, keys, 'sideEffects', mustBeBoolean);
                 let pluginData = getFlag(result, keys, 'pluginData', canBeAnything);
+                let cacheEnable = getFlag(result, keys, 'cacheEnable', mustBeBoolean);
                 let errors = getFlag(result, keys, 'errors', mustBeArray);
                 let warnings = getFlag(result, keys, 'warnings', mustBeArray);
                 let watchFiles = getFlag(result, keys, 'watchFiles', mustBeArray);
@@ -891,6 +892,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
                 if (external != null) response.external = external;
                 if (sideEffects != null) response.sideEffects = sideEffects;
                 if (pluginData != null) response.pluginData = stash.store(pluginData);
+                if (cacheEnable != null) response.cacheEnable = cacheEnable;
                 if (errors != null) response.errors = sanitizeMessages(errors, 'errors', stash, name);
                 if (warnings != null) response.warnings = sanitizeMessages(warnings, 'warnings', stash, name);
                 if (watchFiles != null) response.watchFiles = sanitizeStringArray(watchFiles, 'watchFiles');

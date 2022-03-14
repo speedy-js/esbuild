@@ -564,7 +564,9 @@ type OnResolveResult struct {
 	AbsWatchFiles []string
 	AbsWatchDirs  []string
 
-	PluginData       interface{}
+	PluginData  interface{}
+	CacheEnable bool
+
 	Path             logger.Path
 	External         bool
 	IsSideEffectFree bool

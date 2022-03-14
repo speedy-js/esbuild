@@ -540,6 +540,7 @@ type OnResolveResult struct {
 	Namespace   string
 	Suffix      string
 	PluginData  interface{}
+	CacheEnable bool
 
 	WatchFiles []string
 	WatchDirs  []string

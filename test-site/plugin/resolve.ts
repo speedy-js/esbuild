@@ -9,7 +9,8 @@ let resolvePlugin: Plugin = {
         console.log("test_resolve", args.path);
         return {
           path: path.resolve(__dirname, "../src/index.tsx"),
-          namespace: "file"
+          namespace: "file",
+          cacheEnable: true
         }
       }
       return undefined;
