@@ -923,6 +923,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
                 let contents = getFlag(result, keys, 'contents', mustBeStringOrUint8Array);
                 let resolveDir = getFlag(result, keys, 'resolveDir', mustBeString);
                 let pluginData = getFlag(result, keys, 'pluginData', canBeAnything);
+                let cacheEnable = getFlag(result, keys, 'cacheEnable', mustBeBoolean);
                 let loader = getFlag(result, keys, 'loader', mustBeString);
                 let errors = getFlag(result, keys, 'errors', mustBeArray);
                 let warnings = getFlag(result, keys, 'warnings', mustBeArray);
@@ -936,6 +937,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
                 else if (contents != null) response.contents = protocol.encodeUTF8(contents);
                 if (resolveDir != null) response.resolveDir = resolveDir;
                 if (pluginData != null) response.pluginData = stash.store(pluginData);
+                if (cacheEnable != null) response.cacheEnable = cacheEnable;
                 if (loader != null) response.loader = loader;
                 if (errors != null) response.errors = sanitizeMessages(errors, 'errors', stash, name);
                 if (warnings != null) response.warnings = sanitizeMessages(warnings, 'warnings', stash, name);

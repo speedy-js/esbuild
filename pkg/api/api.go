@@ -563,10 +563,11 @@ type OnLoadResult struct {
 	Errors   []Message
 	Warnings []Message
 
-	Contents   *string
-	ResolveDir string
-	Loader     Loader
-	PluginData interface{}
+	Contents    *string
+	ResolveDir  string
+	Loader      Loader
+	PluginData  interface{}
+	CacheEnable bool
 
 	WatchFiles []string
 	WatchDirs  []string

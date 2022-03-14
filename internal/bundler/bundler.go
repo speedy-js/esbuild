@@ -864,15 +864,12 @@ func runOnLoadPlugins(
 			// 更新 缓存 原来每次 调用不读文件
 			var result config.OnLoadResult
 			if isWatchMode && source.KeyPath.Namespace == "file" {
-
 				oldContent := fsCache.GetCache(loaderArgs.Path.Text)
-
 				fsCache.ReadFile(fs, source.KeyPath.Text)
 				newContent := fsCache.GetCache(loaderArgs.Path.Text)
-
 				cacheRes := pluginCache.GetLoadCache(loaderArgs.Path.Text)
 
-				if oldContent == newContent && cacheRes != nil {
+				if oldContent == newContent && cacheRes != nil && cacheRes.CacheEnable != false {
 					result = *cacheRes
 				} else {
 					result = onLoad.Callback(loaderArgs)

@@ -2,8 +2,8 @@ import {loadPlugin, resolvePlugin} from '../plugin'
 import fs from 'fs';
 import path from 'path';
 
-// const esbuild = require('../../scripts/esbuild').installForTests()
-const esbuild = require('../../npm/esbuild/lib/main')
+const esbuild = require('../../scripts/esbuild').installForTests()
+// const esbuild = require('../../npm/esbuild/lib/main')
 
 async function exec() {
 

@@ -395,6 +395,8 @@ export interface OnLoadResult {
   loader?: Loader;
   pluginData?: any;
 
+  cacheEnable?: boolean;
+  
   watchFiles?: string[];
   watchDirs?: string[];
 }

@@ -227,6 +227,8 @@ export interface OnLoadResponse {
   loader?: string;
   pluginData?: number;
 
+  cacheEnable?: boolean;
+
   watchFiles?: string[];
   watchDirs?: string[];
 }

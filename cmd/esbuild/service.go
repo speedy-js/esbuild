@@ -899,6 +899,9 @@ func (service *serviceType) convertPlugins(key int, jsPlugins interface{}, activ
 				if value, ok := response["pluginData"]; ok {
 					result.PluginData = value.(int)
 				}
+				if value, ok := response["cacheEnable"]; ok {
+					result.CacheEnable = value.(bool)
+				}
 				if value, ok := response["errors"]; ok {
 					result.Errors = decodeMessages(value.([]interface{}))
 				}

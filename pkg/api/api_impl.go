@@ -1690,6 +1690,7 @@ func (impl *pluginImpl) onLoad(options OnLoadOptions, callback func(OnLoadArgs) 
 				Suffix:     args.Path.IgnoredSuffix,
 			})
 			result.PluginName = response.PluginName
+			result.CacheEnable = response.CacheEnable
 			result.AbsWatchFiles = impl.validatePathsArray(response.WatchFiles, "watch file")
 			result.AbsWatchDirs = impl.validatePathsArray(response.WatchDirs, "watch directory")
 
