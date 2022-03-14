@@ -639,8 +639,8 @@ export function createChannel(streamIn: StreamIn): StreamOut {
 
   let afterClose = (error: Error | null) => {
     // When the process is closed, fail all pending requests
-    closeData = { reason: error ? ': ' + (error.message || error) : '' };
-    const text = 'The service was stopped' + closeData.reason;
+    closeData = { reason: error ? ": " + (error.message || error) : "" };
+    const text = "The service was stopped" + closeData.reason;
     for (let callback of responseCallbacks.values()) {
       callback(text, null);
     }
@@ -659,8 +659,16 @@ export function createChannel(streamIn: StreamIn): StreamOut {
     watchCallbacks.clear();
   };
 
-  let sendRequest = <Req, Res>(refs: Refs | null, value: Req, callback: (error: string | null, response: Res | null) => void): void => {
-    if (closeData) return callback('The service is no longer running' + closeData.reason, null);
+  let sendRequest = <Req, Res>(
+    refs: Refs | null,
+    value: Req,
+    callback: (error: string | null, response: Res | null) => void
+  ): void => {
+    if (closeData)
+      return callback(
+        "The service is no longer running" + closeData.reason,
+        null
+      );
     let id = nextRequestID++;
     responseCallbacks.set(id, (error, response) => {
       try {
@@ -676,8 +684,11 @@ export function createChannel(streamIn: StreamIn): StreamOut {
   };
 
   let sendResponse = (id: number, value: protocol.Value): void => {
-    if (closeData) throw new Error('The service is no longer running' + closeData.reason);
-    streamIn.writeToStdin(protocol.encodePacket({ id, isRequest: false, value }));
+    if (closeData)
+      throw new Error("The service is no longer running" + closeData.reason);
+    streamIn.writeToStdin(
+      protocol.encodePacket({ id, isRequest: false, value })
+    );
   };
 
   type RequestType =
@@ -1658,16 +1669,33 @@ export function createChannel(streamIn: StreamIn): StreamOut {
         if (response!.rebuild) {
           if (!rebuild) {
             let isDisposed = false;
-            (rebuild as any) = (changefile: string[]) => new Promise<types.BuildResult>((resolve, reject) => {
-              if (isDisposed || closeData) throw new Error('Cannot rebuild');
-              sendRequest<protocol.RebuildRequest, protocol.BuildResponse>(refs, { command: 'rebuild', key, changefile: changefile ?? [] },
-                (error2, response2) => {
-                  if (error2) {
-                    const message: types.Message = { pluginName: '', text: error2, location: null, notes: [], detail: void 0 };
-                    return callback(failureErrorWithLog('Build failed', [message], []), null);
+            (rebuild as any) = (changefile: string[]) =>
+              new Promise<types.BuildResult>((resolve, reject) => {
+                if (isDisposed || closeData) throw new Error("Cannot rebuild");
+                sendRequest<protocol.RebuildRequest, protocol.BuildResponse>(
+                  refs,
+                  { command: "rebuild", key, changefile: changefile ?? [] },
+                  (error2, response2) => {
+                    if (error2) {
+                      const message: types.Message = {
+                        pluginName: "",
+                        text: error2,
+                        location: null,
+                        notes: [],
+                        detail: void 0,
+                      };
+                      return callback(
+                        failureErrorWithLog("Build failed", [message], []),
+                        null
+                      );
+                    }
+                    buildResponseToResult(response2, (error3, result3) => {
+                      if (error3) reject(error3);
+                      else resolve(result3!);
+                    });
                   }
                 );
-            });
+              });
             refs.ref();
             rebuild!.dispose = () => {
               if (isDisposed) return;
