@@ -980,6 +980,7 @@ func rebuildImpl(
 		PreserveSymlinks:      buildOpts.PreserveSymlinks,
 		WatchMode:             buildOpts.Watch != nil,
 		Incremental:           buildOpts.Incremental,
+		ChangeFile:            buildOpts.ChangeFile,
 		Plugins:               plugins,
 	}
 	if options.MainFields != nil {
@@ -1187,9 +1188,10 @@ func rebuildImpl(
 		}
 	}
 
-	var rebuild func() BuildResult
+	var rebuild func(changefile []string) BuildResult
 	if buildOpts.Incremental {
-		rebuild = func() BuildResult {
+		rebuild = func(changefile []string) BuildResult {
+			buildOpts.ChangeFile = changefile
 			value := rebuildImpl(buildOpts, caches, plugins, nil, onEndCallbacks, logOptions, logger.NewStderrLog(logOptions), true /* isRebuild */)
 			if watch != nil {
 				watch.setWatchData(value.watchData)

@@ -268,6 +268,7 @@ type Options struct {
 	CodeSplitting     bool
 	WatchMode         bool
 	Incremental       bool
+	ChangeFile        []string // extra add nodejs watch files about change
 	AllowOverwrite    bool
 	LegalComments     LegalComments
 

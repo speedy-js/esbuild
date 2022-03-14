@@ -25,7 +25,7 @@ import (
 )
 
 type responseCallback func(interface{})
-type rebuildCallback func(uint32) []byte
+type rebuildCallback func(uint32, []string) []byte
 type watchStopCallback func()
 type serveStopCallback func()
 type pluginResolveCallback func(uint32, map[string]interface{}) []byte
@@ -259,13 +259,22 @@ func (service *serviceType) handleIncomingPacket(bytes []byte) (result outgoingP
 
 		case "rebuild":
 			key := request["key"].(int)
+			var changefile []string
+			if request["changefile"] != nil {
+				interfaceChangefile := request["changefile"].([]interface{})
+				changefile = make([]string, len(interfaceChangefile))
+				for i, v := range interfaceChangefile {
+					changefile[i] = fmt.Sprint(v)
+				}
+			}
+
 			if build := service.getActiveBuild(key); build != nil {
 				build.mutex.Lock()
 				rebuild := build.rebuild
 				build.mutex.Unlock()
 				if rebuild != nil {
 					return outgoingPacket{
-						bytes: rebuild(p.id),
+						bytes: rebuild(p.id, changefile),
 					}
 				}
 			}
@@ -502,8 +511,8 @@ func (service *serviceType) handleBuildRequest(id uint32, request map[string]int
 	response := resultToResponse(result)
 
 	if incremental {
-		activeBuild.rebuild = func(id uint32) []byte {
-			result := result.Rebuild()
+		activeBuild.rebuild = func(id uint32, changfile []string) []byte {
+			result := result.Rebuild(changfile)
 			response := resultToResponse(result)
 			return encodePacket(packet{
 				id:    id,

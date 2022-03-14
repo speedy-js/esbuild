@@ -330,6 +330,8 @@ type BuildOptions struct {
 	Plugins        []Plugin      // Documentation: https://esbuild.github.io/plugins/
 
 	Watch *WatchMode // Documentation: https://esbuild.github.io/api/#watch
+
+	ChangeFile []string // extra add nodejs watch files about change
 }
 
 type EntryPoint struct {
@@ -356,8 +358,8 @@ type BuildResult struct {
 	Metafile    string
 	MangleCache map[string]interface{}
 
-	Rebuild func() BuildResult // Only when "Incremental: true"
-	Stop    func()             // Only when "Watch: true"
+	Rebuild func(changefile []string) BuildResult // Only when "Incremental: true"
+	Stop    func()                                // Only when "Watch: true"
 }
 
 type OutputFile struct {

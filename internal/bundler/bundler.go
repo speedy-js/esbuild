@@ -139,6 +139,7 @@ func parseFile(args parseArgs) {
 			args.pluginData,
 			args.options.WatchMode || args.options.Incremental,
 			&args.caches.PluginCache,
+			args.options.ChangeFile,
 		)
 		if !ok {
 			if args.inject != nil {
@@ -847,6 +848,7 @@ func runOnLoadPlugins(
 	pluginData interface{},
 	isWatchMode bool,
 	pluginCache *cache.PluginCache,
+	changeFile []string,
 ) (loaderPluginResult, bool) {
 	loaderArgs := config.OnLoadArgs{
 		Path:       source.KeyPath,
@@ -865,7 +867,18 @@ func runOnLoadPlugins(
 			var result config.OnLoadResult
 			if isWatchMode && source.KeyPath.Namespace == "file" {
 				oldContent := fsCache.GetCache(loaderArgs.Path.Text)
-				fsCache.ReadFile(fs, source.KeyPath.Text)
+				if len(changeFile) > 0 {
+					for _, file := range changeFile {
+						if file == source.KeyPath.Text {
+							fsCache.ReadFile(fs, source.KeyPath.Text)
+							break
+						}
+					}
+				} else {
+					// 如果改变为空 则全量更新
+					fsCache.ReadFile(fs, source.KeyPath.Text)
+				}
+
 				newContent := fsCache.GetCache(loaderArgs.Path.Text)
 				cacheRes := pluginCache.GetLoadCache(loaderArgs.Path.Text)
 
