@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/base32"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"math/rand"
 	"net/http"
@@ -732,17 +731,14 @@ func RunOnResolvePlugins(
 			}
 
 			var result config.OnResolveResult
-			str, err := json.Marshal(resolverArgs)
-			if err != nil {
-				result = onResolve.Callback(resolverArgs)
+			key := resolverArgs.Importer.Text + "@@@" + resolverArgs.Path
+
+			resolveCacheRes := pluginCache.GetResolveCache(key)
+			if resolveCacheRes != nil && resolveCacheRes.CacheEnable {
+				result = *resolveCacheRes
 			} else {
-				resolveCacheRes := pluginCache.GetResolveCache(string(str))
-				if resolveCacheRes != nil && resolveCacheRes.CacheEnable != false {
-					result = *resolveCacheRes
-				} else {
-					result = onResolve.Callback(resolverArgs)
-					pluginCache.SetResolveCache(string(str), &result)
-				}
+				result = onResolve.Callback(resolverArgs)
+				pluginCache.SetResolveCache(key, &result)
 			}
 
 			pluginName := result.PluginName
@@ -878,11 +874,12 @@ func runOnLoadPlugins(
 					// 如果改变为空 则全量更新
 					fsCache.ReadFile(fs, source.KeyPath.Text)
 				}
+				fsCache.ReadFile(fs, source.KeyPath.Text)
 
 				newContent := fsCache.GetCache(loaderArgs.Path.Text)
 				cacheRes := pluginCache.GetLoadCache(loaderArgs.Path.Text)
 
-				if oldContent == newContent && cacheRes != nil && cacheRes.CacheEnable != false {
+				if oldContent == newContent && cacheRes != nil && cacheRes.CacheEnable {
 					result = *cacheRes
 				} else {
 					result = onLoad.Callback(loaderArgs)
