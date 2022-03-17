@@ -139,6 +139,8 @@ var helpText = func(colors logger.Colors) string {
 }
 
 func main() {
+
+	// 原始逻辑
 	logger.API = logger.CLIAPI
 
 	osArgs := os.Args[1:]
