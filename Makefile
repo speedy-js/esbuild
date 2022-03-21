@@ -357,8 +357,8 @@ publish-all: check-go-version
 
 	# Commit now before publishing so git is clean for this: https://github.com/golang/go/issues/37475
 	# Note: If this fails, then the version number was likely not incremented before running this command
-	git commit -am "publish $(ESBUILD_VERSION) to npm"
-	git tag "v$(ESBUILD_VERSION)"
+	# git commit -am "publish $(ESBUILD_VERSION) to npm"
+	git tag "speedy-js-v$(ESBUILD_VERSION)"
 	@test -z "`git status --porcelain`" || (echo "Aborting because git is somehow unclean after a commit" && false)
 
 	# Make sure the npm directory is pristine (including .gitignored files) since it will be published
