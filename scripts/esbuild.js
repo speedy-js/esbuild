@@ -72,7 +72,7 @@ const buildNeutralLib = (esbuildPath) => {
     ...platforms.exports.knownWindowsPackages,
     ...platforms.exports.knownUnixlikePackages,
     ...platforms.exports.knownWebAssemblyFallbackPackages,
-  }).sort().map(x => [x, version]))
+  }).sort().map(x => [`@speedy-js/${x}`, version]))
 
   // Update "npm/esbuild/package.json"
   const pjPath = path.join(npmDir, 'package.json')
