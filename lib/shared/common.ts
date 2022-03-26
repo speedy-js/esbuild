@@ -18,7 +18,7 @@ let mustBeBooleanOrObject = (
   value: Object | boolean | undefined
 ): string | null =>
   typeof value === "boolean" ||
-  (typeof value === "object" && !Array.isArray(value))
+    (typeof value === "object" && !Array.isArray(value))
     ? null
     : "a boolean or an object";
 
@@ -63,7 +63,7 @@ let mustBeStringOrObject = (
   value: string | Object | undefined
 ): string | null =>
   typeof value === "string" ||
-  (typeof value === "object" && value !== null && !Array.isArray(value))
+    (typeof value === "object" && value !== null && !Array.isArray(value))
     ? null
     : "a string or an object";
 
@@ -489,10 +489,9 @@ function flagsForTransformOptions(
     flags.push(`--sourcemap=${sourcemap === true ? "external" : sourcemap}`);
   if (tsconfigRaw)
     flags.push(
-      `--tsconfig-raw=${
-        typeof tsconfigRaw === "string"
-          ? tsconfigRaw
-          : JSON.stringify(tsconfigRaw)
+      `--tsconfig-raw=${typeof tsconfigRaw === "string"
+        ? tsconfigRaw
+        : JSON.stringify(tsconfigRaw)
       }`
     );
   if (sourcefile) flags.push(`--sourcefile=${sourcefile}`);
@@ -516,7 +515,7 @@ export interface StreamIn {
 
 export interface StreamOut {
   readFromStdout: (data: Uint8Array) => void;
-  afterClose: () => void;
+  afterClose: (error: Error | null) => void;
   service: StreamService;
 }
 
@@ -603,7 +602,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
   let pluginCallbacks = new Map<number, PluginCallback>();
   let watchCallbacks = new Map<number, WatchCallback>();
   let serveCallbacks = new Map<number, ServeCallbacks>();
-  let isClosed = false;
+  let closeData: { reason: string } | null = null;
   let nextRequestID = 0;
   let nextBuildKey = 0;
 
@@ -638,20 +637,21 @@ export function createChannel(streamIn: StreamIn): StreamOut {
     }
   };
 
-  let afterClose = () => {
+  let afterClose = (error: Error | null) => {
     // When the process is closed, fail all pending requests
-    isClosed = true;
+    closeData = { reason: error ? ': ' + (error.message || error) : '' };
+    const text = 'The service was stopped' + closeData.reason;
     for (let callback of responseCallbacks.values()) {
-      callback("The service was stopped", null);
+      callback(text, null);
     }
     responseCallbacks.clear();
     for (let callbacks of serveCallbacks.values()) {
-      callbacks.onWait("The service was stopped");
+      callbacks.onWait(text);
     }
     serveCallbacks.clear();
     for (let callback of watchCallbacks.values()) {
       try {
-        callback(new Error("The service was stopped"), null);
+        callback(new Error(text), null);
       } catch (e) {
         console.error(e);
       }
@@ -659,12 +659,8 @@ export function createChannel(streamIn: StreamIn): StreamOut {
     watchCallbacks.clear();
   };
 
-  let sendRequest = <Req, Res>(
-    refs: Refs | null,
-    value: Req,
-    callback: (error: string | null, response: Res | null) => void
-  ): void => {
-    if (isClosed) return callback("The service is no longer running", null);
+  let sendRequest = <Req, Res>(refs: Refs | null, value: Req, callback: (error: string | null, response: Res | null) => void): void => {
+    if (closeData) return callback('The service is no longer running' + closeData.reason, null);
     let id = nextRequestID++;
     responseCallbacks.set(id, (error, response) => {
       try {
@@ -680,10 +676,8 @@ export function createChannel(streamIn: StreamIn): StreamOut {
   };
 
   let sendResponse = (id: number, value: protocol.Value): void => {
-    if (isClosed) throw new Error("The service is no longer running");
-    streamIn.writeToStdin(
-      protocol.encodePacket({ id, isRequest: false, value })
-    );
+    if (closeData) throw new Error('The service is no longer running' + closeData.reason);
+    streamIn.writeToStdin(protocol.encodePacket({ id, isRequest: false, value }));
   };
 
   type RequestType =
@@ -814,11 +808,11 @@ export function createChannel(streamIn: StreamIn): StreamOut {
     refs: Refs | null
   ): Promise<
     | {
-        ok: true;
-        requestPlugins: protocol.BuildPlugin[];
-        runOnEndCallbacks: RunOnEndCallbacks;
-        pluginRefs: Refs;
-      }
+      ok: true;
+      requestPlugins: protocol.BuildPlugin[];
+      runOnEndCallbacks: RunOnEndCallbacks;
+      pluginRefs: Refs;
+    }
     | { ok: false; error: any; pluginName: string }
   > => {
     let onStartCallbacks: {
@@ -1476,7 +1470,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
       let flags: string[] = [];
       try {
         pushLogFlags(flags, options, {}, isTTY, buildLogLevelDefault);
-      } catch {}
+      } catch { }
       const message = extractErrorMessageV8(
         e,
         streamIn,
@@ -1664,33 +1658,16 @@ export function createChannel(streamIn: StreamIn): StreamOut {
         if (response!.rebuild) {
           if (!rebuild) {
             let isDisposed = false;
-            (rebuild as any) = (changefile: string[]) =>
-              new Promise<types.BuildResult>((resolve, reject) => {
-                if (isDisposed || isClosed) throw new Error("Cannot rebuild");
-                sendRequest<protocol.RebuildRequest, protocol.BuildResponse>(
-                  refs,
-                  { command: "rebuild", key, changefile: changefile ?? [] },
-                  (error2, response2) => {
-                    if (error2) {
-                      const message: types.Message = {
-                        pluginName: "",
-                        text: error2,
-                        location: null,
-                        notes: [],
-                        detail: void 0,
-                      };
-                      return callback(
-                        failureErrorWithLog("Build failed", [message], []),
-                        null
-                      );
-                    }
-                    buildResponseToResult(response2, (error3, result3) => {
-                      if (error3) reject(error3);
-                      else resolve(result3!);
-                    });
+            (rebuild as any) = (changefile: string[]) => new Promise<types.BuildResult>((resolve, reject) => {
+              if (isDisposed || closeData) throw new Error('Cannot rebuild');
+              sendRequest<protocol.RebuildRequest, protocol.BuildResponse>(refs, { command: 'rebuild', key, changefile: changefile ?? [] },
+                (error2, response2) => {
+                  if (error2) {
+                    const message: types.Message = { pluginName: '', text: error2, location: null, notes: [], detail: void 0 };
+                    return callback(failureErrorWithLog('Build failed', [message], []), null);
                   }
                 );
-              });
+            });
             refs.ref();
             rebuild!.dispose = () => {
               if (isDisposed) return;
@@ -1923,7 +1900,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
         let flags: string[] = [];
         try {
           pushLogFlags(flags, options, {}, isTTY, transformLogLevelDefault);
-        } catch {}
+        } catch { }
         const error = extractErrorMessageV8(e, streamIn, details, void 0, "");
         sendRequest(refs, { command: "error", flags, error }, () => {
           error.detail = details.load(error.detail);
@@ -2059,7 +2036,7 @@ function extractCallerV8(
         note = { text: e.message, location };
         return note;
       }
-    } catch {}
+    } catch { }
   };
 }
 
@@ -2075,12 +2052,12 @@ function extractErrorMessageV8(
 
   try {
     text = ((e && e.message) || e) + "";
-  } catch {}
+  } catch { }
 
   // Optionally attempt to extract the file from the stack trace, works in V8/node
   try {
     location = parseStackLinesV8(streamIn, (e.stack + "").split("\n"), "");
-  } catch {}
+  } catch { }
 
   return {
     pluginName,
@@ -2168,16 +2145,16 @@ function failureErrorWithLog(
     errors.length < 1
       ? ""
       : ` with ${errors.length} error${errors.length < 2 ? "" : "s"}:` +
-        errors
-          .slice(0, limit + 1)
-          .map((e, i) => {
-            if (i === limit) return "\n...";
-            if (!e.location) return `\nerror: ${e.text}`;
-            let { file, line, column } = e.location;
-            let pluginText = e.pluginName ? `[plugin: ${e.pluginName}] ` : "";
-            return `\n${file}:${line}:${column}: ERROR: ${pluginText}${e.text}`;
-          })
-          .join("");
+      errors
+        .slice(0, limit + 1)
+        .map((e, i) => {
+          if (i === limit) return "\n...";
+          if (!e.location) return `\nerror: ${e.text}`;
+          let { file, line, column } = e.location;
+          let pluginText = e.pluginName ? `[plugin: ${e.pluginName}] ` : "";
+          return `\n${file}:${line}:${column}: ERROR: ${pluginText}${e.text}`;
+        })
+        .join("");
   let error: any = new Error(`${text}${summary}`);
   error.errors = errors;
   error.warnings = warnings;
