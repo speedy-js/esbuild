@@ -542,7 +542,7 @@ type OnResolveResult struct {
 	Namespace   string
 	Suffix      string
 	PluginData  interface{}
-	CacheEnable bool
+	CacheDisable bool
 
 	WatchFiles []string
 	WatchDirs  []string
@@ -570,7 +570,7 @@ type OnLoadResult struct {
 	ResolveDir  string
 	Loader      Loader
 	PluginData  interface{}
-	CacheEnable bool
+	CacheDisable bool
 
 	WatchFiles []string
 	WatchDirs  []string

@@ -734,7 +734,7 @@ func RunOnResolvePlugins(
 			key := resolverArgs.Importer.Text + "@@@" + resolverArgs.Path
 
 			resolveCacheRes := pluginCache.GetResolveCache(key)
-			if resolveCacheRes != nil && resolveCacheRes.CacheEnable {
+			if resolveCacheRes != nil && resolveCacheRes.CacheDisable {
 				result = *resolveCacheRes
 			} else {
 				result = onResolve.Callback(resolverArgs)
@@ -879,7 +879,7 @@ func runOnLoadPlugins(
 				newContent := fsCache.GetCache(loaderArgs.Path.Text)
 				cacheRes := pluginCache.GetLoadCache(loaderArgs.Path.Text)
 
-				if oldContent == newContent && cacheRes != nil && cacheRes.CacheEnable {
+				if oldContent == newContent && cacheRes != nil && cacheRes.CacheDisable {
 					result = *cacheRes
 				} else {
 					result = onLoad.Callback(loaderArgs)
@@ -1073,6 +1073,7 @@ func ScanBundle(
 ) Bundle {
 	timer.Begin("Scan phase")
 	defer timer.End("Scan phase")
+	log.Add(logger.Warning, nil, logger.Range{}, fmt.Sprintf("hello world"))
 
 	applyOptionDefaults(&options)
 

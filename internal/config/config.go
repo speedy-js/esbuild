@@ -565,8 +565,8 @@ type OnResolveResult struct {
 	AbsWatchFiles []string
 	AbsWatchDirs  []string
 
-	PluginData  interface{}
-	CacheEnable bool
+	PluginData   interface{}
+	CacheDisable bool
 
 	Path             logger.Path
 	External         bool
@@ -591,7 +591,7 @@ type OnLoadResult struct {
 	Contents      *string
 	AbsResolveDir string
 	PluginData    interface{}
-	CacheEnable   bool
+	CacheDisable   bool
 
 	Msgs        []logger.Msg
 	ThrownError error

@@ -1162,10 +1162,10 @@ export function createChannel(streamIn: StreamIn): StreamOut {
                   "pluginData",
                   canBeAnything
                 );
-                let cacheEnable = getFlag(
+                let cacheDisable = getFlag(
                   result,
                   keys,
-                  "cacheEnable",
+                  "cacheDisable",
                   mustBeBoolean
                 );
                 let errors = getFlag(result, keys, "errors", mustBeArray);
@@ -1192,7 +1192,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
                 if (sideEffects != null) response.sideEffects = sideEffects;
                 if (pluginData != null)
                   response.pluginData = stash.store(pluginData);
-                if (cacheEnable != null) response.cacheEnable = cacheEnable;
+                if (cacheDisable != null) response.cacheDisable = cacheDisable;
                 if (errors != null)
                   response.errors = sanitizeMessages(
                     errors,
@@ -1284,10 +1284,10 @@ export function createChannel(streamIn: StreamIn): StreamOut {
                   "pluginData",
                   canBeAnything
                 );
-                let cacheEnable = getFlag(
+                let cacheDisable = getFlag(
                   result,
                   keys,
-                  "cacheEnable",
+                  "cacheDisable",
                   mustBeBoolean
                 );
                 let loader = getFlag(result, keys, "loader", mustBeString);
@@ -1315,7 +1315,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
                 if (resolveDir != null) response.resolveDir = resolveDir;
                 if (pluginData != null)
                   response.pluginData = stash.store(pluginData);
-                if (cacheEnable != null) response.cacheEnable = cacheEnable;
+                if (cacheDisable != null) response.cacheDisable = cacheDisable;
                 if (loader != null) response.loader = loader;
                 if (errors != null)
                   response.errors = sanitizeMessages(
