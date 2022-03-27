@@ -368,7 +368,7 @@ export interface OnResolveResult {
   suffix?: string;
   pluginData?: any;
 
-  cacheEnable?: boolean;
+  cacheDisable?: boolean;
 
   watchFiles?: string[];
   watchDirs?: string[];
@@ -397,7 +397,7 @@ export interface OnLoadResult {
   loader?: Loader;
   pluginData?: any;
 
-  cacheEnable?: boolean;
+  cacheDisable?: boolean;
   
   watchFiles?: string[];
   watchDirs?: string[];

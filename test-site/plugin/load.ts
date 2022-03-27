@@ -13,7 +13,7 @@ let loadPlugin: Plugin = {
         return {
           contents: content,
           loader: "tsx",
-          cacheEnable: true
+          cacheDisable: true
         }
       }
       return undefined

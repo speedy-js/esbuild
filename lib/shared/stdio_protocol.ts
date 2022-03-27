@@ -202,7 +202,7 @@ export interface OnResolveResponse {
   suffix?: string;
   pluginData?: number;
 
-  cacheEnable?: boolean;
+  cacheDisable?: boolean;
 
   watchFiles?: string[];
   watchDirs?: string[];
@@ -230,7 +230,7 @@ export interface OnLoadResponse {
   loader?: string;
   pluginData?: number;
 
-  cacheEnable?: boolean;
+  cacheDisable?: boolean;
 
   watchFiles?: string[];
   watchDirs?: string[];
