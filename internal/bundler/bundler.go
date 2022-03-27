@@ -731,10 +731,11 @@ func RunOnResolvePlugins(
 			}
 
 			var result config.OnResolveResult
-			key := resolverArgs.Importer.Text + "@@@" + resolverArgs.Path
+			key := resolverArgs.Importer.Text + "@@@" + resolverArgs.Path + "@@@" + resolverArgs.Importer.IgnoredSuffix +
+				"@@@" + resolverArgs.Importer.Namespace
 
 			resolveCacheRes := pluginCache.GetResolveCache(key)
-			if resolveCacheRes != nil && resolveCacheRes.CacheDisable {
+			if resolveCacheRes != nil && !resolveCacheRes.CacheDisable {
 				result = *resolveCacheRes
 			} else {
 				result = onResolve.Callback(resolverArgs)
@@ -875,15 +876,15 @@ func runOnLoadPlugins(
 					fsCache.ReadFile(fs, source.KeyPath.Text)
 				}
 				fsCache.ReadFile(fs, source.KeyPath.Text)
-
+				var key = loaderArgs.Path.Text + "@@@" + loaderArgs.Path.IgnoredSuffix
 				newContent := fsCache.GetCache(loaderArgs.Path.Text)
-				cacheRes := pluginCache.GetLoadCache(loaderArgs.Path.Text)
+				cacheRes := pluginCache.GetLoadCache(key)
 
-				if oldContent == newContent && cacheRes != nil && cacheRes.CacheDisable {
+				if oldContent == newContent && cacheRes != nil && !cacheRes.CacheDisable {
 					result = *cacheRes
 				} else {
 					result = onLoad.Callback(loaderArgs)
-					pluginCache.SetLoadCache(loaderArgs.Path.Text, &result)
+					pluginCache.SetLoadCache(key, &result)
 				}
 			} else {
 				result = onLoad.Callback(loaderArgs)
@@ -1073,7 +1074,6 @@ func ScanBundle(
 ) Bundle {
 	timer.Begin("Scan phase")
 	defer timer.End("Scan phase")
-	log.Add(logger.Warning, nil, logger.Range{}, fmt.Sprintf("hello world"))
 
 	applyOptionDefaults(&options)
 

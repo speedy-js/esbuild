@@ -536,12 +536,12 @@ type OnResolveResult struct {
 	Errors   []Message
 	Warnings []Message
 
-	Path        string
-	External    bool
-	SideEffects SideEffects
-	Namespace   string
-	Suffix      string
-	PluginData  interface{}
+	Path         string
+	External     bool
+	SideEffects  SideEffects
+	Namespace    string
+	Suffix       string
+	PluginData   interface{}
 	CacheDisable bool
 
 	WatchFiles []string
@@ -566,10 +566,10 @@ type OnLoadResult struct {
 	Errors   []Message
 	Warnings []Message
 
-	Contents    *string
-	ResolveDir  string
-	Loader      Loader
-	PluginData  interface{}
+	Contents     *string
+	ResolveDir   string
+	Loader       Loader
+	PluginData   interface{}
 	CacheDisable bool
 
 	WatchFiles []string

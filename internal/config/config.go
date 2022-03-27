@@ -591,7 +591,7 @@ type OnLoadResult struct {
 	Contents      *string
 	AbsResolveDir string
 	PluginData    interface{}
-	CacheDisable   bool
+	CacheDisable  bool
 
 	Msgs        []logger.Msg
 	ThrownError error
