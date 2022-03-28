@@ -66,7 +66,7 @@ export function pkgAndSubpathForCurrentPlatform(): { pkg: string, subpath: strin
 }
 
 function pkgForSomeOtherPlatform(): string | null {
-  const libMainJS = require.resolve('esbuild');
+  const libMainJS = require.resolve('@speedy-js/esbuild');
   const nodeModulesDirectory = path.dirname(path.dirname(path.dirname(libMainJS)));
 
   if (path.basename(nodeModulesDirectory) === 'node_modules') {
@@ -91,7 +91,7 @@ function pkgForSomeOtherPlatform(): string | null {
 }
 
 export function downloadedBinPath(pkg: string, subpath: string): string {
-  const esbuildLibDir = path.dirname(require.resolve('esbuild'));
+  const esbuildLibDir = path.dirname(require.resolve('@speedy-js/esbuild'));
   return path.join(esbuildLibDir, `downloaded-${pkg}-${path.basename(subpath)}`);
 }
 
@@ -185,7 +185,7 @@ by esbuild to install the correct binary executable for your current platform.`)
   } catch (e) {
   }
   if (isYarnPnP) {
-    const esbuildLibDir = path.dirname(require.resolve('esbuild'));
+    const esbuildLibDir = path.dirname(require.resolve('@speedy-js/esbuild'));
     const binTargetPath = path.join(esbuildLibDir, `pnpapi-${pkg}-${path.basename(subpath)}`);
     if (!fs.existsSync(binTargetPath)) {
       fs.copyFileSync(binPath, binTargetPath);
