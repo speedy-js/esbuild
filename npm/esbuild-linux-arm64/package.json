@@ -1,6 +1,6 @@
 {
   "name": "@speedy-js/esbuild-linux-arm64",
-  "version": "0.14.25",
+  "version": "0.14.25-speedy-0",
   "description": "The Linux ARM 64-bit binary for esbuild, a JavaScript bundler.",
   "repository": "https://github.com/evanw/esbuild",
   "license": "MIT",
