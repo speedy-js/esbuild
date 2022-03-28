@@ -50,3 +50,13 @@ func (c *FSCache) ReadFile(fs fs.FS, path string) (contents string, canonicalErr
 	}
 	return contents, nil, nil
 }
+
+func (c *FSCache) GetCache(path string) string {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	entry := c.entries[path]
+	if entry != nil {
+		return entry.contents
+	}
+	return ""
+}

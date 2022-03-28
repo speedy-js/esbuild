@@ -269,6 +269,8 @@ type Options struct {
 	ProfilerNames     bool
 	CodeSplitting     bool
 	WatchMode         bool
+	Incremental       bool
+	ChangeFile        []string // extra add nodejs watch files about change
 	AllowOverwrite    bool
 	LegalComments     LegalComments
 
@@ -601,7 +603,9 @@ type OnResolveResult struct {
 	AbsWatchFiles []string
 	AbsWatchDirs  []string
 
-	PluginData       interface{}
+	PluginData   interface{}
+	CacheDisable bool
+
 	Path             logger.Path
 	External         bool
 	IsSideEffectFree bool
@@ -625,6 +629,7 @@ type OnLoadResult struct {
 	Contents      *string
 	AbsResolveDir string
 	PluginData    interface{}
+	CacheDisable  bool
 
 	Msgs        []logger.Msg
 	ThrownError error

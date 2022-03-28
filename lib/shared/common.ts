@@ -897,6 +897,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
                 let external = getFlag(result, keys, 'external', mustBeBoolean);
                 let sideEffects = getFlag(result, keys, 'sideEffects', mustBeBoolean);
                 let pluginData = getFlag(result, keys, 'pluginData', canBeAnything);
+                let cacheDisable = getFlag(result, keys, "cacheDisable", mustBeBoolean);
                 let errors = getFlag(result, keys, 'errors', mustBeArray);
                 let warnings = getFlag(result, keys, 'warnings', mustBeArray);
                 let watchFiles = getFlag(result, keys, 'watchFiles', mustBeArray);
@@ -911,6 +912,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
                 if (external != null) response.external = external;
                 if (sideEffects != null) response.sideEffects = sideEffects;
                 if (pluginData != null) response.pluginData = stash.store(pluginData);
+                if (cacheDisable != null) response.cacheDisable = cacheDisable;
                 if (errors != null) response.errors = sanitizeMessages(errors, 'errors', stash, name);
                 if (warnings != null) response.warnings = sanitizeMessages(warnings, 'warnings', stash, name);
                 if (watchFiles != null) response.watchFiles = sanitizeStringArray(watchFiles, 'watchFiles');
@@ -943,6 +945,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
                 let contents = getFlag(result, keys, 'contents', mustBeStringOrUint8Array);
                 let resolveDir = getFlag(result, keys, 'resolveDir', mustBeString);
                 let pluginData = getFlag(result, keys, 'pluginData', canBeAnything);
+                let cacheDisable = getFlag(result, keys, "cacheDisable", mustBeBoolean);
                 let loader = getFlag(result, keys, 'loader', mustBeString);
                 let errors = getFlag(result, keys, 'errors', mustBeArray);
                 let warnings = getFlag(result, keys, 'warnings', mustBeArray);
@@ -956,6 +959,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
                 else if (contents != null) response.contents = protocol.encodeUTF8(contents);
                 if (resolveDir != null) response.resolveDir = resolveDir;
                 if (pluginData != null) response.pluginData = stash.store(pluginData);
+                if (cacheDisable != null) response.cacheDisable = cacheDisable;
                 if (loader != null) response.loader = loader;
                 if (errors != null) response.errors = sanitizeMessages(errors, 'errors', stash, name);
                 if (warnings != null) response.warnings = sanitizeMessages(warnings, 'warnings', stash, name);
@@ -1214,9 +1218,9 @@ export function createChannel(streamIn: StreamIn): StreamOut {
         if (response!.rebuild) {
           if (!rebuild) {
             let isDisposed = false;
-            (rebuild as any) = () => new Promise<types.BuildResult>((resolve, reject) => {
+            (rebuild as any) = (changefile: string[]) => new Promise<types.BuildResult>((resolve, reject) => {
               if (isDisposed || closeData) throw new Error('Cannot rebuild');
-              sendRequest<protocol.RebuildRequest, protocol.BuildResponse>(refs, { command: 'rebuild', key },
+              sendRequest<protocol.RebuildRequest, protocol.BuildResponse>(refs, { command: 'rebuild', key, changefile: changefile ?? [] },
                 (error2, response2) => {
                   if (error2) {
                     const message: types.Message = { id: '', pluginName: '', text: error2, location: null, notes: [], detail: void 0 };

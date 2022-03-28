@@ -141,6 +141,8 @@ var helpText = func(colors logger.Colors) string {
 }
 
 func main() {
+
+	// 原始逻辑
 	logger.API = logger.CLIAPI
 
 	osArgs := os.Args[1:]
@@ -149,7 +151,10 @@ func main() {
 	cpuprofileFile := ""
 	isRunningService := false
 	sendPings := false
-
+	var timingValue = os.Getenv("ESBUILD_TIMING")
+	if timingValue == "true" {
+		api_helpers.UseTimer = true
+	}
 	// Do an initial scan over the argument list
 	argsEnd := 0
 	for _, arg := range osArgs {

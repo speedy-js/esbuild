@@ -72,7 +72,7 @@ const buildNeutralLib = (esbuildPath) => {
     ...platforms.exports.knownWindowsPackages,
     ...platforms.exports.knownUnixlikePackages,
     ...platforms.exports.knownWebAssemblyFallbackPackages,
-  }).sort().map(x => [x, version]))
+  }).sort().map(x => [`@speedy-js/${x}`, version]))
 
   // Update "npm/esbuild/package.json"
   const pjPath = path.join(npmDir, 'package.json')
@@ -264,7 +264,8 @@ exports.writeFileAtomic = (where, contents) => {
 }
 
 exports.buildBinary = () => {
-  childProcess.execFileSync('go', ['build', '-ldflags=-s -w', '-trimpath', './cmd/esbuild'], { cwd: repoDir, stdio: 'ignore' })
+//  childProcess.execFileSync('go', ['build', '-ldflags=-s -w', '-trimpath', './cmd/esbuild'], { cwd: repoDir, stdio: 'ignore' })
+  childProcess.execFileSync('go', ['build', '-gcflags="all=-N -l"', '-ldflags=-s -w', '-trimpath', './cmd/esbuild'], { cwd: repoDir, stdio: 'ignore' })
   return path.join(repoDir, process.platform === 'win32' ? 'esbuild.exe' : 'esbuild')
 }
 
@@ -306,15 +307,15 @@ exports.installForTests = () => {
   // "rimraf.sync()" appears to hang when this happens. Other operating systems
   // don't have a problem with this. This has only been a problem on the Windows
   // VM in GitHub CI. I cannot reproduce this issue myself.
-  const installDir = path.join(os.tmpdir(), 'esbuild-' + Math.random().toString(36).slice(2))
+  const installDir = path.join(os.tmpdir(), 'speedy-js-esbuild-' + Math.random().toString(36).slice(2))
   const env = { ...process.env, ESBUILD_BINARY_PATH: esbuildPath }
   fs.mkdirSync(installDir)
   fs.writeFileSync(path.join(installDir, 'package.json'), '{}')
   childProcess.execSync(`npm pack --silent "${npmDir}"`, { cwd: installDir, stdio: 'inherit' })
-  childProcess.execSync(`npm install --silent --no-audit --progress=false esbuild-${version}.tgz`, { cwd: installDir, env, stdio: 'inherit' })
+  childProcess.execSync(`npm install --silent --no-audit --progress=false speedy-js-esbuild-${version}.tgz`, { cwd: installDir, env, stdio: 'inherit' })
 
   // Evaluate the code
-  const ESBUILD_PACKAGE_PATH = path.join(installDir, 'node_modules', 'esbuild')
+  const ESBUILD_PACKAGE_PATH = path.join(installDir, 'node_modules', '@speedy-js/esbuild')
   const mod = require(ESBUILD_PACKAGE_PATH)
   Object.defineProperty(mod, 'ESBUILD_PACKAGE_PATH', { value: ESBUILD_PACKAGE_PATH })
   return mod
