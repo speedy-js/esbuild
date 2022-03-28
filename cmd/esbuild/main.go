@@ -174,6 +174,10 @@ func main() {
 			// This is a hidden flag because it's only intended for debugging esbuild
 			// itself. The output is not documented and not stable.
 			api_helpers.UseTimer = true
+			var timingValue = os.Getenv("ESBUILD_TIMING")
+			if timingValue == "true" {
+				api_helpers.UseTimer = true
+			}
 
 		case strings.HasPrefix(arg, "--cpuprofile="):
 			cpuprofileFile = arg[len("--cpuprofile="):]
