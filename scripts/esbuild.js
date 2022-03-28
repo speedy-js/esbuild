@@ -106,41 +106,9 @@ exports.buildWasmLib = async (esbuildPath) => {
   // Generate "npm/esbuild-wasm/wasm_exec.js"
   const GOROOT = childProcess.execFileSync('go', ['env', 'GOROOT']).toString().trim();
   let wasm_exec_js = fs.readFileSync(path.join(GOROOT, 'misc', 'wasm', 'wasm_exec.js'), 'utf8');
-  const replace = (toReplace, replacement) => {
-    if (wasm_exec_js.indexOf(toReplace) === -1) throw new Error(`Failed to find ${JSON.stringify(toReplace)} in Go JS shim code`);
-    wasm_exec_js = wasm_exec_js.replace(toReplace, replacement);
-  }
-  replace('global.fs = fs;', `
-    global.fs = Object.assign({}, fs, {
-      // Hack around a Unicode bug in node: https://github.com/nodejs/node/issues/24550
-      write(fd, buf, offset, length, position, callback) {
-        if (offset === 0 && length === buf.length && position === null) {
-          if (fd === process.stdout.fd) {
-            try {
-              process.stdout.write(buf, err => err ? callback(err, 0, null) : callback(null, length, buf));
-            } catch (err) {
-              callback(err, 0, null);
-            }
-            return;
-          }
-          if (fd === process.stderr.fd) {
-            try {
-              process.stderr.write(buf, err => err ? callback(err, 0, null) : callback(null, length, buf));
-            } catch (err) {
-              callback(err, 0, null);
-            }
-            return;
-          }
-        }
-        fs.write(fd, buf, offset, length, position, callback);
-      },
-    });
-  `);
-  replace('// End of polyfills for common API.', `
-    // Make sure Go sees the shadowed "fs" global
-    const { fs } = global;
-  `);
+  let wasm_exec_node_js = fs.readFileSync(path.join(GOROOT, 'misc', 'wasm', 'wasm_exec_node.js'), 'utf8');
   fs.writeFileSync(path.join(npmWasmDir, 'wasm_exec.js'), wasm_exec_js);
+  fs.writeFileSync(path.join(npmWasmDir, 'wasm_exec_node.js'), wasm_exec_node_js);
 
   // Generate "npm/esbuild-wasm/lib/main.js"
   childProcess.execFileSync(esbuildPath, [
