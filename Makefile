@@ -357,8 +357,8 @@ publish-all: check-go-version
 
 	# Commit now before publishing so git is clean for this: https://github.com/golang/go/issues/37475
 	# Note: If this fails, then the version number was likely not incremented before running this command
-	git commit -am "publish $(ESBUILD_VERSION) to npm"
-	git tag "v$(ESBUILD_VERSION)"
+	# git commit -am "publish $(ESBUILD_VERSION) to npm"
+	git tag "speedy-js-v$(ESBUILD_VERSION)"
 	@test -z "`git status --porcelain`" || (echo "Aborting because git is somehow unclean after a commit" && false)
 
 	# Make sure the npm directory is pristine (including .gitignored files) since it will be published
@@ -403,76 +403,76 @@ publish-all: check-go-version
 	@echo Enter one-time password:
 	@read OTP && OTP="$$OTP" $(MAKE) --no-print-directory -j4 \
 		publish-neutral \
-		publish-deno \
+		# publish-deno \
 		publish-wasm
 
 	git push origin master "v$(ESBUILD_VERSION)"
 
 publish-windows: platform-windows
-	test -n "$(OTP)" && cd npm/esbuild-windows-64 && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-windows-64 && npm publish --access public --otp="$(OTP)"
 
 publish-windows-32: platform-windows-32
-	test -n "$(OTP)" && cd npm/esbuild-windows-32 && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-windows-32 && npm publish --access public --otp="$(OTP)"
 
 publish-windows-arm64: platform-windows-arm64
-	test -n "$(OTP)" && cd npm/esbuild-windows-arm64 && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-windows-arm64 && npm publish --access public --otp="$(OTP)"
 
 publish-android: platform-android
-	test -n "$(OTP)" && cd npm/esbuild-android-64 && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-android-64 && npm publish --access public --otp="$(OTP)"
 
 publish-android-arm64: platform-android-arm64
-	test -n "$(OTP)" && cd npm/esbuild-android-arm64 && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-android-arm64 && npm publish --access public --otp="$(OTP)"
 
 publish-darwin: platform-darwin
-	test -n "$(OTP)" && cd npm/esbuild-darwin-64 && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-darwin-64 && npm publish --access public --otp="$(OTP)"
 
 publish-darwin-arm64: platform-darwin-arm64
-	test -n "$(OTP)" && cd npm/esbuild-darwin-arm64 && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-darwin-arm64 && npm publish --access public --otp="$(OTP)"
 
 publish-freebsd: platform-freebsd
-	test -n "$(OTP)" && cd npm/esbuild-freebsd-64 && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-freebsd-64 && npm publish --access public --otp="$(OTP)"
 
 publish-freebsd-arm64: platform-freebsd-arm64
-	test -n "$(OTP)" && cd npm/esbuild-freebsd-arm64 && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-freebsd-arm64 && npm publish --access public --otp="$(OTP)"
 
 publish-netbsd: platform-netbsd
-	test -n "$(OTP)" && cd npm/esbuild-netbsd-64 && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-netbsd-64 && npm publish --access public --otp="$(OTP)"
 
 publish-openbsd: platform-openbsd
-	test -n "$(OTP)" && cd npm/esbuild-openbsd-64 && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-openbsd-64 && npm publish --access public --otp="$(OTP)"
 
 publish-linux: platform-linux
-	test -n "$(OTP)" && cd npm/esbuild-linux-64 && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-linux-64 && npm publish --access public --otp="$(OTP)"
 
 publish-linux-32: platform-linux-32
-	test -n "$(OTP)" && cd npm/esbuild-linux-32 && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-linux-32 && npm publish --access public --otp="$(OTP)"
 
 publish-linux-arm: platform-linux-arm
-	test -n "$(OTP)" && cd npm/esbuild-linux-arm && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-linux-arm && npm publish --access public --otp="$(OTP)"
 
 publish-linux-arm64: platform-linux-arm64
-	test -n "$(OTP)" && cd npm/esbuild-linux-arm64 && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-linux-arm64 && npm publish --access public --otp="$(OTP)"
 
 publish-linux-mips64le: platform-linux-mips64le
-	test -n "$(OTP)" && cd npm/esbuild-linux-mips64le && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-linux-mips64le && npm publish --access public --otp="$(OTP)"
 
 publish-linux-ppc64le: platform-linux-ppc64le
-	test -n "$(OTP)" && cd npm/esbuild-linux-ppc64le && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-linux-ppc64le && npm publish --access public --otp="$(OTP)"
 
 publish-linux-riscv64: platform-linux-riscv64
-	test -n "$(OTP)" && cd npm/esbuild-linux-riscv64 && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-linux-riscv64 && npm publish --access public --otp="$(OTP)"
 
 publish-linux-s390x: platform-linux-s390x
-	test -n "$(OTP)" && cd npm/esbuild-linux-s390x && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-linux-s390x && npm publish --access public --otp="$(OTP)"
 
 publish-sunos: platform-sunos
-	test -n "$(OTP)" && cd npm/esbuild-sunos-64 && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-sunos-64 && npm publish --access public --otp="$(OTP)"
 
 publish-wasm: platform-wasm
-	test -n "$(OTP)" && cd npm/esbuild-wasm && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild-wasm && npm publish --access public --otp="$(OTP)"
 
 publish-neutral: platform-neutral
-	test -n "$(OTP)" && cd npm/esbuild && npm publish --otp="$(OTP)"
+	test -n "$(OTP)" && cd npm/esbuild && npm publish --access public --otp="$(OTP)"
 
 publish-deno:
 	test -d deno/.git || (rm -fr deno && git clone git@github.com:esbuild/deno-esbuild.git deno)

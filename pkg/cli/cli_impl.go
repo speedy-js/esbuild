@@ -16,6 +16,7 @@ import (
 	"github.com/evanw/esbuild/pkg/api"
 )
 
+// origin build_option init function
 func newBuildOptions() api.BuildOptions {
 	return api.BuildOptions{
 		Loader: make(map[string]api.Loader),

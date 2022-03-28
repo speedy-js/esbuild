@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"os"
 	"regexp"
+	"runtime/pprof"
 	"sort"
 	"strconv"
 	"strings"
@@ -887,6 +888,25 @@ func rebuildImpl(
 	log logger.Log,
 	isRebuild bool,
 ) internalBuildResult {
+	// 增加profile 控制
+	isCPUPprof := false
+	profileValue := os.Getenv("ESBUILD_PROFILE")
+	if profileValue == "true" {
+		isCPUPprof = true
+	}
+	if isCPUPprof {
+		flag := "./esbuild_cpu_"
+		flag += strconv.FormatInt(time.Now().Unix(), 10)
+		flag += ".pprof"
+		file, err := os.Create(flag)
+		if err != nil {
+			fmt.Printf("create cpu pprof failed, err:%v\n", err)
+		} else {
+			pprof.StartCPUProfile(file)
+			defer pprof.StopCPUProfile()
+		}
+	}
+
 	// Convert and validate the buildOpts
 	realFS, err := fs.RealFS(fs.RealFSOptions{
 		AbsWorkingDir: buildOpts.AbsWorkingDir,
@@ -959,6 +979,8 @@ func rebuildImpl(
 		CSSFooter:             footerCSS,
 		PreserveSymlinks:      buildOpts.PreserveSymlinks,
 		WatchMode:             buildOpts.Watch != nil,
+		Incremental:           buildOpts.Incremental,
+		ChangeFile:            buildOpts.ChangeFile,
 		Plugins:               plugins,
 	}
 	if options.MainFields != nil {
@@ -1166,9 +1188,10 @@ func rebuildImpl(
 		}
 	}
 
-	var rebuild func() BuildResult
+	var rebuild func(changefile []string) BuildResult
 	if buildOpts.Incremental {
-		rebuild = func() BuildResult {
+		rebuild = func(changefile []string) BuildResult {
+			buildOpts.ChangeFile = changefile
 			value := rebuildImpl(buildOpts, caches, plugins, nil, onEndCallbacks, logOptions, logger.NewStderrLog(logOptions), true /* isRebuild */)
 			if watch != nil {
 				watch.setWatchData(value.watchData)
@@ -1616,6 +1639,7 @@ func (impl *pluginImpl) onResolve(options OnResolveOptions, callback func(OnReso
 				PluginData: args.PluginData,
 			})
 			result.PluginName = response.PluginName
+			result.CacheDisable = response.CacheDisable
 			result.AbsWatchFiles = impl.validatePathsArray(response.WatchFiles, "watch file")
 			result.AbsWatchDirs = impl.validatePathsArray(response.WatchDirs, "watch directory")
 
@@ -1669,6 +1693,7 @@ func (impl *pluginImpl) onLoad(options OnLoadOptions, callback func(OnLoadArgs) 
 				Suffix:     args.Path.IgnoredSuffix,
 			})
 			result.PluginName = response.PluginName
+			result.CacheDisable = response.CacheDisable
 			result.AbsWatchFiles = impl.validatePathsArray(response.WatchFiles, "watch file")
 			result.AbsWatchDirs = impl.validatePathsArray(response.WatchDirs, "watch directory")
 
@@ -1787,6 +1812,7 @@ func loadPlugins(initialOptions *BuildOptions, fs fs.FS, log logger.Log, caches 
 				kind,
 				absResolveDir,
 				options.PluginData,
+				&caches.PluginCache,
 			)
 			msgs := log.Done()
 
