@@ -109,7 +109,7 @@ export function generateBinPath(): { binPath: string, isWASM: boolean } {
   try {
     // First check for the binary package from our "optionalDependencies". This
     // package should have been installed alongside this package at install time.
-    binPath = require.resolve(`${pkg}/${subpath}`);
+    binPath = require.resolve(`@speedy-js/${pkg}/${subpath}`);
   } catch (e) {
     // If that didn't work, then someone probably installed esbuild with the
     // "--no-optional" flag. Our install script attempts to compensate for this
