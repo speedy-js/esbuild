@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Child from "./component/Child/index";
 // import {Button, Input} from "antd";
+// abcddedd
 
 class Page extends React.Component {
 	render() {

@@ -162,6 +162,7 @@ export interface ResolveRequest {
   resolveDir?: string;
   kind?: string;
   pluginData?: number;
+  origin?: boolean;
 }
 
 export interface ResolveResponse {
@@ -338,14 +339,15 @@ export function decodePacket(bytes: Uint8Array): Packet {
   if (bb.ptr !== bytes.length) {
     throw new Error("Invalid packet");
   }
-  return { id, isRequest, value };
+  return {id, isRequest, value};
 }
 
 class ByteBuffer {
   len = 0;
   ptr = 0;
 
-  constructor(public buf = new Uint8Array(1024)) {}
+  constructor(public buf = new Uint8Array(1024)) {
+  }
 
   private _write(delta: number): number {
     if (this.len + delta > this.buf.length) {
@@ -429,7 +431,7 @@ else if (typeof Buffer !== "undefined") {
     return buffer;
   };
   decodeUTF8 = (bytes) => {
-    let { buffer, byteOffset, byteLength } = bytes;
+    let {buffer, byteOffset, byteLength} = bytes;
     return Buffer.from(buffer, byteOffset, byteLength).toString();
   };
 } else {
