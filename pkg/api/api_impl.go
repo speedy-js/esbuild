@@ -1771,6 +1771,74 @@ func loadPlugins(initialOptions *BuildOptions, fs fs.FS, log logger.Log, caches 
 			plugin: config.Plugin{Name: item.Name},
 		}
 
+		origin_resolve := func(path string, options ResolveOptions) (result ResolveResult) {
+			resolveMutex.Lock()
+			buildOptions := optionsForResolve
+			resolveMutex.Unlock()
+
+			if buildOptions == nil {
+				return ResolveResult{Errors: []Message{{Text: "Cannot call \"resolve\" before plugin setup has completed"}}}
+			}
+
+			log := logger.NewDeferLog(logger.DeferLogNoVerboseOrDebug)
+			resolver := resolver.NewResolver(fs, log, caches, *buildOptions)
+
+			absResolveDir := validatePath(log, fs, options.ResolveDir, "resolve directory")
+			if log.HasErrors() {
+				msgs := log.Done()
+				result.Errors = convertMessagesToPublic(logger.Error, msgs)
+				result.Warnings = convertMessagesToPublic(logger.Warning, msgs)
+				return
+			}
+
+			if log.HasErrors() {
+				msgs := log.Done()
+				result.Errors = convertMessagesToPublic(logger.Error, msgs)
+				result.Warnings = convertMessagesToPublic(logger.Warning, msgs)
+				return
+			}
+
+			// Run path resolution
+			kind := resolveKindToImportKind(options.Kind)
+			tracker := logger.MakeLineColumnTracker(nil)
+			resolveResult, _ := resolver.Resolve(absResolveDir, path, kind)
+			if resolveResult != nil && resolveResult.DifferentCase != nil && !helpers.IsInsideNodeModules(absResolveDir) {
+				diffCase := *resolveResult.DifferentCase
+				log.Add(logger.Warning, &tracker, logger.Range{}, fmt.Sprintf(
+					"Use %q instead of %q to avoid issues with case-sensitive file systems",
+					resolver.PrettyPath(logger.Path{Text: fs.Join(diffCase.Dir, diffCase.Actual), Namespace: "file"}),
+					resolver.PrettyPath(logger.Path{Text: fs.Join(diffCase.Dir, diffCase.Query), Namespace: "file"}),
+				))
+			}
+
+			msgs := log.Done()
+
+			// Populate the result
+			result.Errors = convertMessagesToPublic(logger.Error, msgs)
+			result.Warnings = convertMessagesToPublic(logger.Warning, msgs)
+			if resolveResult != nil {
+				result.Path = resolveResult.PathPair.Primary.Text
+				result.External = resolveResult.IsExternal
+				result.SideEffects = resolveResult.PrimarySideEffectsData == nil
+				result.Namespace = resolveResult.PathPair.Primary.Namespace
+				result.Suffix = resolveResult.PathPair.Primary.IgnoredSuffix
+				result.PluginData = resolveResult.PluginData
+			} else if len(result.Errors) == 0 {
+				// Always fail with at least one error
+				pluginName := item.Name
+				if options.PluginName != "" {
+					pluginName = options.PluginName
+				}
+				text, notes := bundler.ResolveFailureErrorTextAndNotes(resolver, path, kind, pluginName, fs, absResolveDir, buildOptions.Platform, "")
+				result.Errors = append(result.Errors, convertMessagesToPublic(logger.Error, []logger.Msg{{
+					Data:  logger.MsgData{Text: text},
+					Notes: notes,
+				}})...)
+			}
+			return
+
+		}
+
 		resolve := func(path string, options ResolveOptions) (result ResolveResult) {
 			// Try to grab the resolver options
 			resolveMutex.Lock()
@@ -1844,6 +1912,7 @@ func loadPlugins(initialOptions *BuildOptions, fs fs.FS, log logger.Log, caches 
 		item.Setup(PluginBuild{
 			InitialOptions: initialOptions,
 			Resolve:        resolve,
+			OriginResolve:  origin_resolve,
 			OnStart:        impl.onStart,
 			OnEnd:          onEnd,
 			OnResolve:      impl.onResolve,

@@ -709,6 +709,7 @@ func (service *serviceType) convertPlugins(key int, jsPlugins interface{}, activ
 			activeBuild.pluginResolve = func(id uint32, request map[string]interface{}) []byte {
 				path := request["path"].(string)
 				var options api.ResolveOptions
+				isOrigin := false
 				if value, ok := request["pluginName"]; ok {
 					options.PluginName = value.(string)
 				}
@@ -720,6 +721,9 @@ func (service *serviceType) convertPlugins(key int, jsPlugins interface{}, activ
 				}
 				if value, ok := request["resolveDir"]; ok {
 					options.ResolveDir = value.(string)
+				}
+				if value, ok := request["origin"]; ok {
+					isOrigin = value.(bool)
 				}
 				if value, ok := request["kind"]; ok {
 					str := value.(string)
@@ -737,8 +741,13 @@ func (service *serviceType) convertPlugins(key int, jsPlugins interface{}, activ
 				if value, ok := request["pluginData"]; ok {
 					options.PluginData = value.(int)
 				}
+				var result api.ResolveResult
+				if isOrigin {
+					result = build.OriginResolve(path, options)
+				} else {
+					result = build.Resolve(path, options)
+				}
 
-				result := build.Resolve(path, options)
 				return encodePacket(packet{
 					id: id,
 					value: map[string]interface{}{

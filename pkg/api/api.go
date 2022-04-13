@@ -484,6 +484,7 @@ type Plugin struct {
 type PluginBuild struct {
 	InitialOptions *BuildOptions
 	Resolve        func(path string, options ResolveOptions) ResolveResult
+	OriginResolve  func(path string, options ResolveOptions) ResolveResult
 	OnStart        func(callback func() (OnStartResult, error))
 	OnEnd          func(callback func(result *BuildResult))
 	OnResolve      func(options OnResolveOptions, callback func(OnResolveArgs) (OnResolveResult, error))
