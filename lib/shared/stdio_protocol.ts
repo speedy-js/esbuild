@@ -162,6 +162,7 @@ export interface ResolveRequest {
   resolveDir?: string;
   kind?: string;
   pluginData?: number;
+  origin?: boolean;
 }
 
 export interface ResolveResponse {

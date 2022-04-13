@@ -747,7 +747,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
         };
         i++;
 
-        let resolve = (path: string, options: types.ResolveOptions = {}): Promise<types.ResolveResult> => {
+        let resolve = (path: string, options: types.ResolveOptions = {}, origin = false): Promise<types.ResolveResult> => {
           if (!isSetupDone) throw new Error('Cannot call "resolve" before plugin setup has completed');
           if (typeof path !== 'string') throw new Error(`The path to resolve must be a string`);
           let keys: OptionKeys = Object.create(null);
@@ -772,6 +772,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
             if (resolveDir != null) request.resolveDir = resolveDir
             if (kind != null) request.kind = kind
             if (pluginData != null) request.pluginData = stash.store(pluginData)
+            request.origin = origin;
 
             sendRequest<protocol.ResolveRequest, protocol.ResolveResponse>(refs, request, (error, response) => {
               if (error !== null) reject(new Error(error))

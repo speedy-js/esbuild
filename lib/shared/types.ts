@@ -280,7 +280,7 @@ export interface Plugin {
 
 export interface PluginBuild {
   initialOptions: BuildOptions;
-  resolve(path: string, options?: ResolveOptions): Promise<ResolveResult>;
+  resolve(path: string, options?: ResolveOptions, origin?: boolean): Promise<ResolveResult>;
 
   onStart(callback: () =>
     (OnStartResult | null | void | Promise<OnStartResult | null | void>)): void;
