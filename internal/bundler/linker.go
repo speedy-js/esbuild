@@ -2939,10 +2939,10 @@ func sanitizeFilePathForVirtualModulePath(path string) string {
 // In this case we just pick an arbitrary but consistent order.
 func (c *linkerContext) findImportedCSSFilesInJSOrder(entryPoint uint32) (order []uint32) {
 	visited := make(map[uint32]bool)
-	var visit func(uint32, ast.Index32)
+	var visit func(uint32, ast.Index32, bool)
 
 	// Include this file and all files it imports
-	visit = func(sourceIndex uint32, importerIndex ast.Index32) {
+	visit = func(sourceIndex uint32, importerIndex ast.Index32, parentIsLive bool) {
 		if visited[sourceIndex] {
 			return
 		}
@@ -2957,9 +2957,12 @@ func (c *linkerContext) findImportedCSSFilesInJSOrder(entryPoint uint32) (order 
 			// imports, could end up being activated by the bundle and needs its
 			// CSS to be included. This may change if/when code splitting is
 			// supported for CSS.
-			if !part.IsLive {
-				continue
-			}
+
+			// This will cause esbuild skip some live css bug
+			// if !part.IsLive {
+			// 	continue
+			// }
+			importIsLive := part.IsLive
 
 			// Traverse any files imported by this part. Note that CommonJS calls
 			// to "require()" count as imports too, sort of as if the part has an
@@ -2969,19 +2972,24 @@ func (c *linkerContext) findImportedCSSFilesInJSOrder(entryPoint uint32) (order 
 			// this is the only way to do it.
 			for _, importRecordIndex := range part.ImportRecordIndices {
 				if record := &repr.AST.ImportRecords[importRecordIndex]; record.SourceIndex.IsValid() {
-					visit(record.SourceIndex.GetIndex(), ast.MakeIndex32(sourceIndex))
+					visit(record.SourceIndex.GetIndex(), ast.MakeIndex32(sourceIndex), importIsLive)
 				}
 			}
 		}
 
 		// Iterate over the associated CSS imports in postorder
 		if repr.CSSSourceIndex.IsValid() {
-			order = append(order, repr.CSSSourceIndex.GetIndex())
+			cssIndex := repr.CSSSourceIndex.GetIndex()
+			cssFile := c.graph.Files[cssIndex]
+			if parentIsLive && cssFile.IsLive {
+				order = append(order, cssIndex)
+			}
+
 		}
 	}
 
 	// Include all files reachable from the entry point
-	visit(entryPoint, ast.Index32{})
+	visit(entryPoint, ast.Index32{}, true)
 
 	return
 }
