@@ -1,6 +1,6 @@
 {
   "name": "@speedy-js/esbuild-sunos-64",
-  "version": "0.14.28-speedy-2",
+  "version": "0.14.28-speedy-3",
   "description": "The illumos 64-bit binary for esbuild, a JavaScript bundler.",
   "repository": "https://github.com/evanw/esbuild",
   "license": "MIT",
