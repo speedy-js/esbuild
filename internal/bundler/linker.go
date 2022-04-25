@@ -3024,10 +3024,11 @@ func (c *linkerContext) findImportedCSSFilesInJSOrder(entryPoint uint32) (order 
 		// Iterate over the associated CSS imports in postorder
 		if repr.CSSSourceIndex.IsValid() {
 			cssIndex := repr.CSSSourceIndex.GetIndex()
-			cssFile := c.graph.Files[cssIndex]
-			if parentIsLive && cssFile.IsLive {
-				order = append(order, cssIndex)
-			}
+			// cssFile := c.graph.Files[cssIndex]
+			order = append(order, cssIndex)
+			// if parentIsLive && cssFile.IsLive {
+			// 	order = append(order, cssIndex)
+			// }
 
 		}
 	}
