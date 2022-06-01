@@ -394,7 +394,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 	DynamicImport: {
 		Chrome:  {{start: v{63, 0, 0}}},
 		Edge:    {{start: v{79, 0, 0}}},
-		ES:      {{start: v{2015, 0, 0}}},
+		ES:      {{start: v{5, 0, 0}}},
 		Firefox: {{start: v{67, 0, 0}}},
 		IOS:     {{start: v{11, 0, 0}}},
 		Node:    {{start: v{12, 20, 0}, end: v{13, 0, 0}}, {start: v{13, 2, 0}}},
