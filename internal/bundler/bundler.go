@@ -2121,7 +2121,7 @@ func applyOptionDefaults(options *config.Options) {
 		}
 	}
 
-	options.ProfilerNames = !options.MinifyIdentifiers
+	options.ProfilerNames = false
 }
 
 func (b *Bundle) Compile(log logger.Log, options config.Options, timer *helpers.Timer, mangleCache map[string]interface{}) ([]graph.OutputFile, string) {
