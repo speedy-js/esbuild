@@ -1,6 +1,6 @@
 {
   "name": "@speedy-js/esbuild-freebsd-64",
-  "version": "0.14.28-speedy-5",
+  "version": "0.14.28-speedy-6",
   "description": "The FreeBSD 64-bit binary for esbuild, a JavaScript bundler.",
   "repository": "https://github.com/evanw/esbuild",
   "license": "MIT",
