@@ -1797,7 +1797,7 @@ func loadPlugins(initialOptions *BuildOptions, fs fs.FS, log logger.Log, caches 
 				return ResolveResult{Errors: []Message{{Text: "Cannot call \"resolve\" before plugin setup has completed"}}}
 			}
 
-			log := logger.NewDeferLog(logger.DeferLogNoVerboseOrDebug)
+			log := logger.NewDeferLog(logger.DeferLogNoVerboseOrDebug, nil)
 			resolver := resolver.NewResolver(fs, log, caches, *buildOptions)
 
 			absResolveDir := validatePath(log, fs, options.ResolveDir, "resolve directory")
@@ -1821,11 +1821,14 @@ func loadPlugins(initialOptions *BuildOptions, fs fs.FS, log logger.Log, caches 
 			resolveResult, _ := resolver.Resolve(absResolveDir, path, kind)
 			if resolveResult != nil && resolveResult.DifferentCase != nil && !helpers.IsInsideNodeModules(absResolveDir) {
 				diffCase := *resolveResult.DifferentCase
-				log.Add(logger.Warning, &tracker, logger.Range{}, fmt.Sprintf(
-					"Use %q instead of %q to avoid issues with case-sensitive file systems",
-					resolver.PrettyPath(logger.Path{Text: fs.Join(diffCase.Dir, diffCase.Actual), Namespace: "file"}),
-					resolver.PrettyPath(logger.Path{Text: fs.Join(diffCase.Dir, diffCase.Query), Namespace: "file"}),
-				))
+				log.AddMsg(logger.Msg{
+					Kind: logger.Warning,
+					Data: tracker.MsgData(logger.Range{}, fmt.Sprintf(
+						"Use %q instead of %q to avoid issues with case-sensitive file systems",
+						resolver.PrettyPath(logger.Path{Text: fs.Join(diffCase.Dir, diffCase.Actual), Namespace: "file"}),
+						resolver.PrettyPath(logger.Path{Text: fs.Join(diffCase.Dir, diffCase.Query), Namespace: "file"}),
+					)),
+				})
 			}
 
 			msgs := log.Done()
@@ -1846,7 +1849,7 @@ func loadPlugins(initialOptions *BuildOptions, fs fs.FS, log logger.Log, caches 
 				if options.PluginName != "" {
 					pluginName = options.PluginName
 				}
-				text, notes := bundler.ResolveFailureErrorTextAndNotes(resolver, path, kind, pluginName, fs, absResolveDir, buildOptions.Platform, "")
+				text, _, notes := bundler.ResolveFailureErrorTextSuggestionNotes(resolver, path, kind, pluginName, fs, absResolveDir, buildOptions.Platform, "")
 				result.Errors = append(result.Errors, convertMessagesToPublic(logger.Error, []logger.Msg{{
 					Data:  logger.MsgData{Text: text},
 					Notes: notes,
