@@ -839,6 +839,7 @@ func (c *linkerContext) computeCrossChunkDependencies(chunks []chunkInfo) {
 	// parallel because it's the most expensive part of this function.
 	waitGroup := sync.WaitGroup{}
 	waitGroup.Add(len(chunks))
+	lock := sync.Mutex{}
 	for chunkIndex, chunk := range chunks {
 		go func(chunkIndex int, chunk chunkInfo) {
 			chunkMeta := &chunkMetas[chunkIndex]
@@ -884,7 +885,13 @@ func (c *linkerContext) computeCrossChunkDependencies(chunks []chunkInfo) {
 						// is fine.
 						for _, declared := range part.DeclaredSymbols {
 							if declared.IsTopLevel {
-								c.graph.Symbols.Get(declared.Ref).ChunkIndex = ast.MakeIndex32(uint32(chunkIndex))
+								lock.Lock()
+								sym := c.graph.Symbols.Get(declared.Ref)
+								if sym.ChunkIndexs == nil {
+									sym.ChunkIndexs = make(map[ast.Index32]bool)
+								}
+								sym.ChunkIndexs[ast.MakeIndex32(uint32(chunkIndex))] = true
+								lock.Unlock()
 							}
 						}
 
@@ -989,11 +996,17 @@ func (c *linkerContext) computeCrossChunkDependencies(chunks []chunkInfo) {
 		chunkRepr.importsFromOtherChunks = make(map[uint32]crossChunkImportItemArray)
 		for importRef := range chunkMeta.imports {
 			// Ignore uses that aren't top-level symbols
-			if otherChunkIndex := c.graph.Symbols.Get(importRef).ChunkIndex; otherChunkIndex.IsValid() {
-				if otherChunkIndex := otherChunkIndex.GetIndex(); otherChunkIndex != uint32(chunkIndex) {
-					chunkRepr.importsFromOtherChunks[otherChunkIndex] =
-						append(chunkRepr.importsFromOtherChunks[otherChunkIndex], crossChunkImportItem{ref: importRef})
-					chunkMetas[otherChunkIndex].exports[importRef] = true
+			for otherChunkIndex, isValid := range c.graph.Symbols.Get(importRef).ChunkIndexs {
+				if isValid && otherChunkIndex.IsValid() {
+					if otherChunkIndex := otherChunkIndex.GetIndex(); otherChunkIndex != uint32(chunkIndex) {
+						otherChunk := chunks[otherChunkIndex]
+						// other chunk entrybits must contain current chunk
+						if !chunk.filesWithPartsInChunk[importRef.SourceIndex] && otherChunk.entryBits.Contains(chunk.entryBits) {
+							chunkRepr.importsFromOtherChunks[otherChunkIndex] =
+								append(chunkRepr.importsFromOtherChunks[otherChunkIndex], crossChunkImportItem{ref: importRef})
+							chunkMetas[otherChunkIndex].exports[importRef] = true
+						}
+					}
 				}
 			}
 		}
@@ -3221,6 +3234,10 @@ func (c *linkerContext) computeChunks() []chunkInfo {
 		}
 	}
 
+	if c.options.CodeSplitting && c.options.MinChunkSize > 0 {
+		c.applyMinSizeForChunks(jsChunks)
+	}
+
 	// Sort the chunks for determinism. This matters because we use chunk indices
 	// as sorting keys in a few places.
 	sortedChunks := make([]chunkInfo, 0, len(jsChunks)+len(cssChunks))
@@ -3344,6 +3361,85 @@ func (c *linkerContext) computeChunks() []chunkInfo {
 	return sortedChunks
 }
 
+func (c *linkerContext) applyMinSizeForChunks(jsChunks map[string]chunkInfo) {
+	type ChunkSizeInfo struct {
+		key  string
+		size int
+	}
+	// calc finial size for not entry point chunk
+	// maybe need to use inner parts size not file content size?
+	sortedInfos := make([]ChunkSizeInfo, 0, len(jsChunks))
+	entryPointChunks := make([]chunkInfo, 0, len(jsChunks))
+	for key := range jsChunks {
+		chunk := jsChunks[key]
+		if chunk.isEntryPoint {
+			entryPointChunks = append(entryPointChunks, chunk)
+			continue
+		}
+
+		size := 0
+		for fileIdx, ok := range chunk.filesWithPartsInChunk {
+			if ok {
+				size += len(c.graph.Files[fileIdx].InputFile.Source.Contents)
+			}
+		}
+		sortedInfos = append(sortedInfos, ChunkSizeInfo{
+			key:  key,
+			size: size,
+		})
+	}
+
+	// sort extraChunks by size
+	sort.SliceStable(sortedInfos, func(i, j int) bool {
+		return sortedInfos[i].size < sortedInfos[j].size
+	})
+
+	infosLen := len(sortedInfos)
+	removeChunkKeys := make([]string, len(jsChunks))
+	for i := 0; i < infosLen; i++ {
+		info := &sortedInfos[i]
+		if info.size >= c.options.MinChunkSize {
+			continue
+		}
+
+		// move chunk to other chunk & remove it
+		chunk := jsChunks[info.key]
+		bitset := chunk.entryBits.Clone()
+		isFirstMatch := true
+		for j := i + 1; j < infosLen; j++ {
+			otherChunk := jsChunks[sortedInfos[j].key]
+			// move to contain chunk
+			if bitset.Contains(otherChunk.entryBits) {
+				for key, value := range chunk.filesWithPartsInChunk {
+					otherChunk.filesWithPartsInChunk[key] = value
+				}
+				bitset.Subtract(otherChunk.entryBits)
+				// merge chunk entryBits to first match chunk
+				// all imports will link to it when generate import & export between chunks
+				if isFirstMatch {
+					otherChunk.entryBits.Merge(chunk.entryBits)
+				}
+				isFirstMatch = false
+			}
+		}
+		// move to entry point chunk
+		for _, otherChunk := range entryPointChunks {
+			if bitset.Contains(otherChunk.entryBits) {
+				for key, value := range chunk.filesWithPartsInChunk {
+					otherChunk.filesWithPartsInChunk[key] = value
+				}
+			}
+		}
+
+		removeChunkKeys = append(removeChunkKeys, info.key)
+	}
+
+	// remove useless chunk
+	for _, k := range removeChunkKeys {
+		delete(jsChunks, k)
+	}
+}
+
 type chunkOrder struct {
 	sourceIndex uint32
 	distance    uint32
@@ -3425,7 +3521,7 @@ func (c *linkerContext) findImportedPartsInJSOrder(chunk *chunkInfo) (js []uint3
 		file := &c.graph.Files[sourceIndex]
 
 		if repr, ok := file.InputFile.Repr.(*graph.JSRepr); ok {
-			isFileInThisChunk := chunk.entryBits.Equals(file.EntryBits)
+			isFileInThisChunk := chunk.entryBits.Equals(file.EntryBits) || chunk.filesWithPartsInChunk[sourceIndex]
 
 			// Wrapped files can't be split because they are all inside the wrapper
 			canFileBeSplit := repr.Meta.Wrap == graph.WrapNone

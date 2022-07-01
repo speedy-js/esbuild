@@ -1357,7 +1357,7 @@ type Symbol struct {
 	UseCountEstimate uint32
 
 	// This is for generating cross-chunk imports and exports for code splitting.
-	ChunkIndex ast.Index32
+	ChunkIndexs map[ast.Index32]bool
 
 	// This is used for minification. Symbols that are declared in sibling scopes
 	// can share a name. A good heuristic (from Google Closure Compiler) is to

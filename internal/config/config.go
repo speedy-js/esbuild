@@ -268,6 +268,7 @@ type Options struct {
 	MinifySyntax      bool
 	ProfilerNames     bool
 	CodeSplitting     bool
+	MinChunkSize      int
 	WatchMode         bool
 	Incremental       bool
 	ChangeFile        []string // extra add nodejs watch files about change

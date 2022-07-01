@@ -525,3 +525,171 @@ func TestSplittingPublicPathEntryName(t *testing.T) {
 		},
 	})
 }
+
+func TestSplittingWithMinChunkSize0(t *testing.T) {
+	splitting_suite.expectBundled(t, bundled{
+		files: map[string]string{
+			"/a.js": `
+				import { ab } from "./ab"
+        export default function main() {
+          ab()
+        }
+			`,
+			"/b.js": `
+				import { ab } from "./ab"
+        import { bc } from "./bc"
+        export default function main() {
+          ab()
+          bc()
+        }
+			`,
+			"/c.js": `
+        import { bc } from "./bc"
+        export default function main() {
+          bc()
+        }
+			`,
+			"/ab.js": `
+        import { abc } from "./abc"
+        export function ab() {
+          abc()
+          console.log(123)
+  				console.log("ab")
+        }
+			`,
+			"/bc.js": `
+        import { abc } from "./abc"
+        export function bc() {
+          abc()
+  				console.log("bc")
+        }
+			`,
+			"/abc.js": `
+        export function abc() {
+  				console.log("abc")
+        }
+      `,
+		},
+		entryPaths: []string{"/a.js", "/b.js", "/c.js"},
+		options: config.Options{
+			Mode:             config.ModeBundle,
+			CodeSplitting:    true,
+			MinifyWhitespace: true,
+			MinChunkSize:     0,
+			OutputFormat:     config.FormatESModule,
+			AbsOutputDir:     "/out",
+		},
+	})
+}
+
+func TestSplittingWithMinChunkSize100(t *testing.T) {
+	splitting_suite.expectBundled(t, bundled{
+		files: map[string]string{
+			"/a.js": `
+				import { ab } from "./ab"
+        export default function main() {
+          ab()
+        }
+			`,
+			"/b.js": `
+				import { ab } from "./ab"
+        import { bc } from "./bc"
+        export default function main() {
+          ab()
+          bc()
+        }
+			`,
+			"/c.js": `
+        import { bc } from "./bc"
+        export default function main() {
+          bc()
+        }
+			`,
+			"/ab.js": `
+        import { abc } from "./abc"
+        export function ab() {
+          abc()
+          console.log(123)
+  				console.log("ab")
+        }
+			`,
+			"/bc.js": `
+        import { abc } from "./abc"
+        export function bc() {
+          abc()
+  				console.log("bc")
+        }
+			`,
+			"/abc.js": `
+        export function abc() {
+  				console.log("abc")
+        }
+      `,
+		},
+		entryPaths: []string{"/a.js", "/b.js", "/c.js"},
+		options: config.Options{
+			Mode:             config.ModeBundle,
+			CodeSplitting:    true,
+			MinifyWhitespace: true,
+			MinChunkSize:     100,
+			OutputFormat:     config.FormatESModule,
+			AbsOutputDir:     "/out",
+		},
+	})
+}
+
+func TestSplittingWithMinChunkSize200(t *testing.T) {
+	splitting_suite.expectBundled(t, bundled{
+		files: map[string]string{
+			"/a.js": `
+				import { ab } from "./ab"
+        export default function main() {
+          ab()
+        }
+			`,
+			"/b.js": `
+				import { ab } from "./ab"
+        import { bc } from "./bc"
+        export default function main() {
+          ab()
+          bc()
+        }
+			`,
+			"/c.js": `
+        import { bc } from "./bc"
+        export default function main() {
+          bc()
+        }
+			`,
+			"/ab.js": `
+        import { abc } from "./abc"
+        export function ab() {
+          abc()
+          console.log(123)
+  				console.log("ab")
+        }
+			`,
+			"/bc.js": `
+        import { abc } from "./abc"
+        export function bc() {
+          abc()
+  				console.log("bc")
+        }
+			`,
+			"/abc.js": `
+        export function abc() {
+  				console.log("abc")
+        }
+      `,
+		},
+		entryPaths: []string{"/a.js", "/b.js", "/c.js"},
+		options: config.Options{
+			Mode:             config.ModeBundle,
+			CodeSplitting:    true,
+			MinifyWhitespace: true,
+			MinChunkSize:     200,
+			OutputFormat:     config.FormatESModule,
+			AbsOutputDir:     "/out",
+		},
+	})
+}

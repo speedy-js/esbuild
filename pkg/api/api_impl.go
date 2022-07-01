@@ -957,6 +957,7 @@ func rebuildImpl(
 		TreeShaking:           validateTreeShaking(buildOpts.TreeShaking, buildOpts.Bundle, buildOpts.Format),
 		GlobalName:            validateGlobalName(log, buildOpts.GlobalName),
 		CodeSplitting:         buildOpts.Splitting,
+		MinChunkSize:          buildOpts.MinChunkSize,
 		OutputFormat:          validateFormat(buildOpts.Format),
 		AbsOutputFile:         validatePath(log, realFS, buildOpts.Outfile, "outfile path"),
 		AbsOutputDir:          validatePath(log, realFS, buildOpts.Outdir, "outdir path"),
@@ -1801,13 +1802,6 @@ func loadPlugins(initialOptions *BuildOptions, fs fs.FS, log logger.Log, caches 
 			resolver := resolver.NewResolver(fs, log, caches, *buildOptions)
 
 			absResolveDir := validatePath(log, fs, options.ResolveDir, "resolve directory")
-			if log.HasErrors() {
-				msgs := log.Done()
-				result.Errors = convertMessagesToPublic(logger.Error, msgs)
-				result.Warnings = convertMessagesToPublic(logger.Warning, msgs)
-				return
-			}
-
 			if log.HasErrors() {
 				msgs := log.Done()
 				result.Errors = convertMessagesToPublic(logger.Error, msgs)

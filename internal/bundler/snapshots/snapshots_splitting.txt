@@ -570,6 +570,54 @@ export {
 };
 
 ================================================================================
+TestSplittingWithMinChunkSize0
+---------- /out/a.js ----------
+import{ab}from"./chunk-PPZCN2HQ.js";import"./chunk-QQUSMVXL.js";function main(){ab()}export{main as default};
+
+---------- /out/b.js ----------
+import{ab}from"./chunk-PPZCN2HQ.js";import{bc}from"./chunk-5EQD3PFI.js";import"./chunk-QQUSMVXL.js";function main(){ab();bc()}export{main as default};
+
+---------- /out/chunk-PPZCN2HQ.js ----------
+import{abc}from"./chunk-QQUSMVXL.js";function ab(){abc();console.log(123);console.log("ab")}export{ab};
+
+---------- /out/c.js ----------
+import{bc}from"./chunk-5EQD3PFI.js";import"./chunk-QQUSMVXL.js";function main(){bc()}export{main as default};
+
+---------- /out/chunk-5EQD3PFI.js ----------
+import{abc}from"./chunk-QQUSMVXL.js";function bc(){abc();console.log("bc")}export{bc};
+
+---------- /out/chunk-QQUSMVXL.js ----------
+function abc(){console.log("abc")}export{abc};
+
+================================================================================
+TestSplittingWithMinChunkSize100
+---------- /out/a.js ----------
+import{ab}from"./chunk-UZVVFJAB.js";import"./chunk-OFBQ4GHF.js";function abc(){console.log("abc")}function main(){ab()}export{main as default};
+
+---------- /out/b.js ----------
+import{ab}from"./chunk-UZVVFJAB.js";import{bc}from"./chunk-OFBQ4GHF.js";function main(){ab();bc()}export{main as default};
+
+---------- /out/chunk-UZVVFJAB.js ----------
+import{abc}from"./chunk-OFBQ4GHF.js";function ab(){abc();console.log(123);console.log("ab")}export{ab};
+
+---------- /out/c.js ----------
+import{bc}from"./chunk-OFBQ4GHF.js";function main(){bc()}export{main as default};
+
+---------- /out/chunk-OFBQ4GHF.js ----------
+function abc(){console.log("abc")}function bc(){abc();console.log("bc")}export{abc,bc};
+
+================================================================================
+TestSplittingWithMinChunkSize200
+---------- /out/a.js ----------
+function abc(){console.log("abc")}function ab(){abc();console.log(123);console.log("ab")}function main(){ab()}function bc(){abc();console.log("bc")}export{main as default};
+
+---------- /out/b.js ----------
+function abc(){console.log("abc")}function ab(){abc();console.log(123);console.log("ab")}function bc(){abc();console.log("bc")}function main(){ab();bc()}export{main as default};
+
+---------- /out/c.js ----------
+function abc(){console.log("abc")}function bc(){abc();console.log("bc")}function main(){bc()}function ab(){abc();console.log(123);console.log("ab")}export{main as default};
+
+================================================================================
 TestVarRelocatingBundle
 ---------- /out/top-level.js ----------
 // top-level.js

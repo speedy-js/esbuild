@@ -421,6 +421,17 @@ func parseOptionsImpl(
 		case strings.HasPrefix(arg, "--chunk-names=") && buildOpts != nil:
 			buildOpts.ChunkNames = arg[len("--chunk-names="):]
 
+		case strings.HasPrefix(arg, "--min-chunk-size=") && buildOpts != nil:
+			value := arg[len("--min-chunk-size="):]
+			size, err := strconv.Atoi(value)
+			if err != nil || size < 0 {
+				return parseOptionsExtras{}, cli_helpers.MakeErrorWithNote(
+					fmt.Sprintf("Invalid value %q in %q", value, arg),
+					"The min chunk size must be a non-negative integer.",
+				)
+			}
+			buildOpts.MinChunkSize = size
+
 		case strings.HasPrefix(arg, "--asset-names=") && buildOpts != nil:
 			buildOpts.AssetNames = arg[len("--asset-names="):]
 
