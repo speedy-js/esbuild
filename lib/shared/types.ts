@@ -78,6 +78,8 @@ export interface BuildOptions extends CommonOptions {
   bundle?: boolean;
   /** Documentation: https://esbuild.github.io/api/#splitting */
   splitting?: boolean;
+  /** Documentation: TODO */
+  minChunkSize?: number;
   /** Documentation: https://esbuild.github.io/api/#preserve-symlinks */
   preserveSymlinks?: boolean;
   /** Documentation: https://esbuild.github.io/api/#outfile */

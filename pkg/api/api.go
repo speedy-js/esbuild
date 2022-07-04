@@ -320,9 +320,10 @@ type BuildOptions struct {
 	Footer            map[string]string // Documentation: https://esbuild.github.io/api/#footer
 	NodePaths         []string          // Documentation: https://esbuild.github.io/api/#node-paths
 
-	EntryNames string // Documentation: https://esbuild.github.io/api/#entry-names
-	ChunkNames string // Documentation: https://esbuild.github.io/api/#chunk-names
-	AssetNames string // Documentation: https://esbuild.github.io/api/#asset-names
+	EntryNames   string // Documentation: https://esbuild.github.io/api/#entry-names
+	ChunkNames   string // Documentation: https://esbuild.github.io/api/#chunk-names
+	MinChunkSize int    // Documentation: TODO
+	AssetNames   string // Documentation: https://esbuild.github.io/api/#asset-names
 
 	EntryPoints         []string     // Documentation: https://esbuild.github.io/api/#entry-points
 	EntryPointsAdvanced []EntryPoint // Documentation: https://esbuild.github.io/api/#entry-points

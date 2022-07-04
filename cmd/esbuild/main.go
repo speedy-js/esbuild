@@ -66,6 +66,8 @@ var helpText = func(colors logger.Colors) string {
   --charset=utf8            Do not escape UTF-8 code points
   --chunk-names=...         Path template to use for code splitting chunks
                             (default "[name]-[hash]")
+  --min-chunk-size=...      Minimum chunk size in bytes, for a chunk to be generated.
+                            (default 0)
   --color=...               Force use of color terminal escapes (true | false)
   --drop:...                Remove certain constructs (console | debugger)
   --entry-names=...         Path template to use for entry point output paths
