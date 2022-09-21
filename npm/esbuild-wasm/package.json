@@ -1,5 +1,5 @@
 {
-  "name": "esbuild-wasm",
+  "name": "@speedy-js/esbuild-wasm",
   "version": "0.17.18",
   "description": "The cross-platform WebAssembly binary for esbuild, a JavaScript bundler.",
   "repository": "https://github.com/evanw/esbuild",

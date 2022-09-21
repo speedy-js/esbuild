@@ -285,7 +285,7 @@ func Link(
 			// targeting non-ES6 formats. Note that the IIFE format only needs this
 			// when the global name is present, since that's the only way the exports
 			// can actually be observed externally.
-			if repr.AST.ExportKeyword.Len > 0 && (options.OutputFormat == config.FormatCommonJS ||
+			if !options.ExcludeExportForEntry && repr.AST.ExportKeyword.Len > 0 && (options.OutputFormat == config.FormatCommonJS ||
 				(options.OutputFormat == config.FormatIIFE && len(options.GlobalName) > 0)) {
 				repr.AST.UsesExportsRef = true
 				repr.Meta.ForceIncludeExportsForEntryPoint = true

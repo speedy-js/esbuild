@@ -1,5 +1,5 @@
 {
-  "name": "@esbuild/freebsd-arm64",
+  "name": "@speedy-js/esbuild-freebsd-arm64",
   "version": "0.17.18",
   "description": "The FreeBSD ARM 64-bit binary for esbuild, a JavaScript bundler.",
   "repository": "https://github.com/evanw/esbuild",

@@ -319,6 +319,8 @@ type Options struct {
 	Stdin      *StdinInfo
 	JSX        JSXOptions
 
+	ExcludeExportForEntry bool
+
 	UnsupportedJSFeatures  compat.JSFeature
 	UnsupportedCSSFeatures compat.CSSFeature
 

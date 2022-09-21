@@ -132,6 +132,9 @@ function validateStringValue(value: unknown, what: string, key?: string): string
 }
 
 function pushCommonFlags(flags: string[], options: CommonOptions, keys: OptionKeys): void {
+
+  let ExcludeExportsForEntryPoint = getFlag(options, keys, 'excludeExportsForEntryPoint', mustBeBoolean);
+
   let legalComments = getFlag(options, keys, 'legalComments', mustBeString)
   let sourceRoot = getFlag(options, keys, 'sourceRoot', mustBeString)
   let sourcesContent = getFlag(options, keys, 'sourcesContent', mustBeBoolean)
@@ -161,6 +164,8 @@ function pushCommonFlags(flags: string[], options: CommonOptions, keys: OptionKe
   let pure = getFlag(options, keys, 'pure', mustBeArray)
   let keepNames = getFlag(options, keys, 'keepNames', mustBeBoolean)
   let platform = getFlag(options, keys, 'platform', mustBeString)
+
+  if (ExcludeExportsForEntryPoint) flags.push(`--exclude-exports-for-entry-point`);
 
   if (legalComments) flags.push(`--legal-comments=${legalComments}`)
   if (sourceRoot !== void 0) flags.push(`--source-root=${sourceRoot}`)

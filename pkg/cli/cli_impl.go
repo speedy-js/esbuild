@@ -289,6 +289,15 @@ func parseOptionsImpl(
 				}
 			}
 
+		case isBoolFlag(arg, "--exclude-exports-for-entry-point"):
+			if value, err := parseBoolFlag(arg, true); err != nil {
+				return parseOptionsExtras{}, err
+			} else if buildOpts != nil {
+				buildOpts.ExcludeExportForEntry = value
+			} else {
+				transformOpts.ExcludeExportForEntry = value
+			}
+
 		case isBoolFlag(arg, "--ignore-annotations"):
 			if value, err := parseBoolFlag(arg, true); err != nil {
 				return parseOptionsExtras{}, err
@@ -819,6 +828,7 @@ func parseOptionsImpl(
 				"entry-names":        true,
 				"footer":             true,
 				"format":             true,
+				"dsl":                true,
 				"global-name":        true,
 				"ignore-annotations": true,
 				"jsx-factory":        true,

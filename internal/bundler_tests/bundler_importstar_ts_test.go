@@ -10,6 +10,85 @@ var importstar_ts_suite = suite{
 	name: "importstar_ts",
 }
 
+func TestExcludeExportsForEntryPoint(t *testing.T) {
+	importstar_ts_suite.expectBundled(t, bundled{
+		files: map[string]string{
+			"/entry.tsx": `
+				export default class A extends Component<Props, State> {
+					state = {
+						count: 1000,
+					};
+				
+					renderXXX = () => <view><text>asdasdasdasdasdasd</text></view>
+				
+					render() {
+						return (
+							<view style={{ display: "flex", flexDirection: "column" }}>
+								<view
+									style={{ width: "100rpx", height: "100rpx", backgroundColor: "red" }}
+									bindtap={() => {
+										this.setState(preState => ({ count: preState.count + 1 }));
+									}}
+								>
+									<text>Plus 1</text>
+								</view>
+								<text>{this.state.count}</text>
+								{this.renderXXX()}
+							</view>
+						);
+					}
+				}
+			`,
+		},
+		entryPaths: []string{"/entry.tsx"},
+		options: config.Options{
+			Mode:                  config.ModeBundle,
+			AbsOutputFile:         "/out.js",
+			ExcludeExportForEntry: true,
+			OutputFormat:          config.FormatCommonJS,
+		},
+	})
+}
+
+func TestCommonClassExport(t *testing.T) {
+	importstar_ts_suite.expectBundled(t, bundled{
+		files: map[string]string{
+			"/entry.tsx": `
+				export default class A extends Component<Props, State> {
+					state = {
+						count: 1000,
+					};
+				
+					renderXXX = () => <view><text>asdasdasdasdasdasd</text></view>
+				
+					render() {
+						return (
+							<view style={{ display: "flex", flexDirection: "column" }}>
+								<view
+									style={{ width: "100rpx", height: "100rpx", backgroundColor: "red" }}
+									bindtap={() => {
+										this.setState(preState => ({ count: preState.count + 1 }));
+									}}
+								>
+									<text>Plus 1</text>
+								</view>
+								<text>{this.state.count}</text>
+								{this.renderXXX()}
+							</view>
+						);
+					}
+				}
+			`,
+		},
+		entryPaths: []string{"/entry.tsx"},
+		options: config.Options{
+			Mode:          config.ModeBundle,
+			AbsOutputFile: "/out.js",
+			OutputFormat:  config.FormatCommonJS,
+		},
+	})
+}
+
 func TestTSImportStarUnused(t *testing.T) {
 	importstar_ts_suite.expectBundled(t, bundled{
 		files: map[string]string{

@@ -1,5 +1,5 @@
 {
-  "name": "@esbuild/win32-ia32",
+  "name": "@speedy-js/esbuild-win32-ia32",
   "version": "0.17.18",
   "description": "The Windows 32-bit binary for esbuild, a JavaScript bundler.",
   "repository": "https://github.com/evanw/esbuild",
