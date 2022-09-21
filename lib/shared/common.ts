@@ -175,6 +175,12 @@ function pushCommonFlags(
   let sourcesContent = getFlag(options, keys, "sourcesContent", mustBeBoolean);
   let target = getFlag(options, keys, "target", mustBeStringOrArray);
   let format = getFlag(options, keys, "format", mustBeString);
+  let ExcludeExportsForEntryPoint = getFlag(
+    options,
+    keys,
+    "excludeExportsForEntryPoint",
+    mustBeBoolean
+  );
   let globalName = getFlag(options, keys, "globalName", mustBeString);
   let mangleProps = getFlag(options, keys, "mangleProps", mustBeRegExp);
   let reserveProps = getFlag(options, keys, "reserveProps", mustBeRegExp);
@@ -221,6 +227,8 @@ function pushCommonFlags(
     else flags.push(`--target=${validateTarget(target)}`);
   }
   if (format) flags.push(`--format=${format}`);
+  if (ExcludeExportsForEntryPoint)
+    flags.push(`--exclude-exports-for-entry-point`);
   if (globalName) flags.push(`--global-name=${globalName}`);
 
   if (minify) flags.push("--minify");
@@ -338,7 +346,7 @@ function flagsForBuildOptions(
         watchKeys,
         `on "watch" in ${callName}() call`
       );
-      watchMode = {onRebuild};
+      watchMode = { onRebuild };
     }
   }
   if (splitting) flags.push("--splitting");
@@ -489,9 +497,10 @@ function flagsForTransformOptions(
     flags.push(`--sourcemap=${sourcemap === true ? "external" : sourcemap}`);
   if (tsconfigRaw)
     flags.push(
-      `--tsconfig-raw=${typeof tsconfigRaw === "string"
-        ? tsconfigRaw
-        : JSON.stringify(tsconfigRaw)
+      `--tsconfig-raw=${
+        typeof tsconfigRaw === "string"
+          ? tsconfigRaw
+          : JSON.stringify(tsconfigRaw)
       }`
     );
   if (sourcefile) flags.push(`--sourcefile=${sourcefile}`);
@@ -584,9 +593,11 @@ export function createChannel(streamIn: StreamIn): StreamOut {
       | protocol.OnStartRequest
       | protocol.OnResolveRequest
       | protocol.OnLoadRequest
-  ) => Promise<| protocol.OnStartResponse
+  ) => Promise<
+    | protocol.OnStartResponse
     | protocol.OnResolveResponse
-    | protocol.OnLoadResponse>;
+    | protocol.OnLoadResponse
+  >;
 
   type WatchCallback = (error: Error | null, response: any) => void;
 
@@ -595,8 +606,10 @@ export function createChannel(streamIn: StreamIn): StreamOut {
     onWait: (error: string | null) => void;
   }
 
-  let responseCallbacks = new Map<number,
-    (error: string | null, response: protocol.Value) => void>();
+  let responseCallbacks = new Map<
+    number,
+    (error: string | null, response: protocol.Value) => void
+  >();
   let pluginCallbacks = new Map<number, PluginCallback>();
   let watchCallbacks = new Map<number, WatchCallback>();
   let serveCallbacks = new Map<number, ServeCallbacks>();
@@ -637,7 +650,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
 
   let afterClose = (error: Error | null) => {
     // When the process is closed, fail all pending requests
-    closeData = {reason: error ? ": " + (error.message || error) : ""};
+    closeData = { reason: error ? ": " + (error.message || error) : "" };
     const text = "The service was stopped" + closeData.reason;
     for (let callback of responseCallbacks.values()) {
       callback(text, null);
@@ -677,7 +690,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
     });
     if (refs) refs.ref();
     streamIn.writeToStdin(
-      protocol.encodePacket({id, isRequest: true, value: value as any})
+      protocol.encodePacket({ id, isRequest: true, value: value as any })
     );
   };
 
@@ -685,7 +698,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
     if (closeData)
       throw new Error("The service is no longer running" + closeData.reason);
     streamIn.writeToStdin(
-      protocol.encodePacket({id, isRequest: false, value})
+      protocol.encodePacket({ id, isRequest: false, value })
     );
   };
 
@@ -815,13 +828,15 @@ export function createChannel(streamIn: StreamIn): StreamOut {
     buildKey: number,
     stash: ObjectStash,
     refs: Refs | null
-  ): Promise<| {
-    ok: true;
-    requestPlugins: protocol.BuildPlugin[];
-    runOnEndCallbacks: RunOnEndCallbacks;
-    pluginRefs: Refs;
-  }
-    | { ok: false; error: any; pluginName: string }> => {
+  ): Promise<
+    | {
+        ok: true;
+        requestPlugins: protocol.BuildPlugin[];
+        runOnEndCallbacks: RunOnEndCallbacks;
+        pluginRefs: Refs;
+      }
+    | { ok: false; error: any; pluginName: string }
+  > => {
     let onStartCallbacks: {
       name: string;
       note: () => types.Note | undefined;
@@ -1059,16 +1074,16 @@ export function createChannel(streamIn: StreamIn): StreamOut {
 
         requestPlugins.push(plugin);
       } catch (e) {
-        return {ok: false, error: e, pluginName: name};
+        return { ok: false, error: e, pluginName: name };
       }
     }
 
     const callback: PluginCallback = async (request) => {
       switch (request.command) {
         case "on-start": {
-          let response: protocol.OnStartResponse = {errors: [], warnings: []};
+          let response: protocol.OnStartResponse = { errors: [], warnings: [] };
           await Promise.all(
-            onStartCallbacks.map(async ({name, callback, note}) => {
+            onStartCallbacks.map(async ({ name, callback, note }) => {
               try {
                 let result = await callback();
 
@@ -1120,7 +1135,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
             note;
           for (let id of request.ids) {
             try {
-              ({name, callback, note} = onResolveCallbacks[id]);
+              ({ name, callback, note } = onResolveCallbacks[id]);
               let result = await callback({
                 path: request.path,
                 importer: request.importer,
@@ -1247,7 +1262,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
             note;
           for (let id of request.ids) {
             try {
-              ({name, callback, note} = onLoadCallbacks[id]);
+              ({ name, callback, note } = onLoadCallbacks[id]);
               let result = await callback({
                 path: request.path,
                 namespace: request.namespace,
@@ -1375,7 +1390,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
     if (onEndCallbacks.length > 0) {
       runOnEndCallbacks = (result, logPluginError, done) => {
         (async () => {
-          for (const {name, callback, note} of onEndCallbacks) {
+          for (const { name, callback, note } of onEndCallbacks) {
             try {
               await callback(result);
             } catch (e) {
@@ -1445,7 +1460,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
       stop() {
         sendRequest<protocol.ServeStopRequest, null>(
           refs,
-          {command: "serve-stop", key},
+          { command: "serve-stop", key },
           () => {
             // We don't care about the result
           }
@@ -1461,7 +1476,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
     let key = nextBuildKey++;
     const details = createObjectStash();
     let plugins: types.Plugin[] | undefined;
-    let {refs, options, isTTY, callback} = args;
+    let { refs, options, isTTY, callback } = args;
     if (typeof options === "object") {
       let value = options.plugins;
       if (value !== void 0) {
@@ -1479,8 +1494,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
       let flags: string[] = [];
       try {
         pushLogFlags(flags, options, {}, isTTY, buildLogLevelDefault);
-      } catch {
-      }
+      } catch {}
       const message = extractErrorMessageV8(
         e,
         streamIn,
@@ -1488,7 +1502,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
         note,
         pluginName
       );
-      sendRequest(refs, {command: "error", flags, error: message}, () => {
+      sendRequest(refs, { command: "error", flags, error: message }, () => {
         message.detail = details.load(message.detail);
         done(message);
       });
@@ -1551,20 +1565,20 @@ export function createChannel(streamIn: StreamIn): StreamOut {
   // nested closure because this function is already huge and I didn't want to
   // make it any bigger.
   let buildOrServeContinue = ({
-                                callName,
-                                refs: callerRefs,
-                                serveOptions,
-                                options,
-                                isTTY,
-                                defaultWD,
-                                callback,
-                                key,
-                                details,
-                                logPluginError,
-                                requestPlugins,
-                                runOnEndCallbacks,
-                                pluginRefs,
-                              }: {
+    callName,
+    refs: callerRefs,
+    serveOptions,
+    options,
+    isTTY,
+    defaultWD,
+    callback,
+    key,
+    details,
+    logPluginError,
+    requestPlugins,
+    runOnEndCallbacks,
+    pluginRefs,
+  }: {
     callName: string;
     refs: Refs | null;
     serveOptions: types.ServeOptions | null;
@@ -1673,7 +1687,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
                 if (isDisposed || closeData) throw new Error("Cannot rebuild");
                 sendRequest<protocol.RebuildRequest, protocol.BuildResponse>(
                   refs,
-                  {command: "rebuild", key, changefile: changefile ?? []},
+                  { command: "rebuild", key, changefile: changefile ?? [] },
                   (error2, response2) => {
                     if (error2) {
                       const message: types.Message = {
@@ -1701,7 +1715,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
               isDisposed = true;
               sendRequest<protocol.RebuildDisposeRequest, null>(
                 refs,
-                {command: "rebuild-dispose", key},
+                { command: "rebuild-dispose", key },
                 () => {
                   // We don't care about the result
                 }
@@ -1723,7 +1737,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
               watchCallbacks.delete(key);
               sendRequest<protocol.WatchStopRequest, null>(
                 refs,
-                {command: "watch-stop", key},
+                { command: "watch-stop", key },
                 () => {
                   // We don't care about the result
                 }
@@ -1823,14 +1837,14 @@ export function createChannel(streamIn: StreamIn): StreamOut {
   };
 
   let transform: StreamService["transform"] = ({
-                                                 callName,
-                                                 refs,
-                                                 input,
-                                                 options,
-                                                 isTTY,
-                                                 fs,
-                                                 callback,
-                                               }) => {
+    callName,
+    refs,
+    input,
+    options,
+    isTTY,
+    fs,
+    callback,
+  }) => {
     const details = createObjectStash();
 
     // Ideally the "transform()" API would be faster than calling "build()"
@@ -1852,7 +1866,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
       try {
         if (typeof input !== "string")
           throw new Error('The input to "transform" must be a string');
-        let {flags, mangleCache} = flagsForTransformOptions(
+        let { flags, mangleCache } = flagsForTransformOptions(
           callName,
           options,
           isTTY,
@@ -1927,10 +1941,9 @@ export function createChannel(streamIn: StreamIn): StreamOut {
         let flags: string[] = [];
         try {
           pushLogFlags(flags, options, {}, isTTY, transformLogLevelDefault);
-        } catch {
-        }
+        } catch {}
         const error = extractErrorMessageV8(e, streamIn, details, void 0, "");
-        sendRequest(refs, {command: "error", flags, error}, () => {
+        sendRequest(refs, { command: "error", flags, error }, () => {
           error.detail = details.load(error.detail);
           callback(failureErrorWithLog("Transform failed", [error], []), null);
         });
@@ -1944,12 +1957,12 @@ export function createChannel(streamIn: StreamIn): StreamOut {
   };
 
   let formatMessages: StreamService["formatMessages"] = ({
-                                                           callName,
-                                                           refs,
-                                                           messages,
-                                                           options,
-                                                           callback,
-                                                         }) => {
+    callName,
+    refs,
+    messages,
+    options,
+    callback,
+  }) => {
     let result = sanitizeMessages(messages, "messages", null, "");
     if (!options)
       throw new Error(`Missing second argument in ${callName}() call`);
@@ -1982,12 +1995,12 @@ export function createChannel(streamIn: StreamIn): StreamOut {
   };
 
   let analyzeMetafile: StreamService["analyzeMetafile"] = ({
-                                                             callName,
-                                                             refs,
-                                                             metafile,
-                                                             options,
-                                                             callback,
-                                                           }) => {
+    callName,
+    refs,
+    metafile,
+    options,
+    callback,
+  }) => {
     if (options === void 0) options = {};
     let keys: OptionKeys = {};
     let color = getFlag(options, keys, "color", mustBeBoolean);
@@ -1999,8 +2012,10 @@ export function createChannel(streamIn: StreamIn): StreamOut {
     };
     if (color !== void 0) request.color = color;
     if (verbose !== void 0) request.verbose = verbose;
-    sendRequest<protocol.AnalyzeMetafileRequest,
-      protocol.AnalyzeMetafileResponse>(refs, request, (error, response) => {
+    sendRequest<
+      protocol.AnalyzeMetafileRequest,
+      protocol.AnalyzeMetafileResponse
+    >(refs, request, (error, response) => {
       if (error) return callback(new Error(error), null);
       callback(null, response!.result);
     });
@@ -2060,11 +2075,10 @@ function extractCallerV8(
       lines.splice(1, 1);
       let location = parseStackLinesV8(streamIn, lines, ident);
       if (location) {
-        note = {text: e.message, location};
+        note = { text: e.message, location };
         return note;
       }
-    } catch {
-    }
+    } catch {}
   };
 }
 
@@ -2080,14 +2094,12 @@ function extractErrorMessageV8(
 
   try {
     text = ((e && e.message) || e) + "";
-  } catch {
-  }
+  } catch {}
 
   // Optionally attempt to extract the file from the stack trace, works in V8/node
   try {
     location = parseStackLinesV8(streamIn, (e.stack + "").split("\n"), "");
-  } catch {
-  }
+  } catch {}
 
   return {
     pluginName,
@@ -2175,16 +2187,16 @@ function failureErrorWithLog(
     errors.length < 1
       ? ""
       : ` with ${errors.length} error${errors.length < 2 ? "" : "s"}:` +
-      errors
-        .slice(0, limit + 1)
-        .map((e, i) => {
-          if (i === limit) return "\n...";
-          if (!e.location) return `\nerror: ${e.text}`;
-          let {file, line, column} = e.location;
-          let pluginText = e.pluginName ? `[plugin: ${e.pluginName}] ` : "";
-          return `\n${file}:${line}:${column}: ERROR: ${pluginText}${e.text}`;
-        })
-        .join("");
+        errors
+          .slice(0, limit + 1)
+          .map((e, i) => {
+            if (i === limit) return "\n...";
+            if (!e.location) return `\nerror: ${e.text}`;
+            let { file, line, column } = e.location;
+            let pluginText = e.pluginName ? `[plugin: ${e.pluginName}] ` : "";
+            return `\n${file}:${line}:${column}: ERROR: ${pluginText}${e.text}`;
+          })
+          .join("");
   let error: any = new Error(`${text}${summary}`);
   error.errors = errors;
   error.warnings = warnings;
@@ -2292,9 +2304,9 @@ function sanitizeStringArray(values: any[], property: string): string[] {
 }
 
 function convertOutputFiles({
-                              path,
-                              contents,
-                            }: protocol.BuildOutputFile): types.OutputFile {
+  path,
+  contents,
+}: protocol.BuildOutputFile): types.OutputFile {
   let text: string | null = null;
   return {
     path,

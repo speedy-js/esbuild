@@ -56,6 +56,8 @@ interface CommonOptions {
 
   /** Documentation: https://esbuild.github.io/api/#define */
   define?: { [key: string]: string };
+  /** exclude export for entry point */
+  excludeExportsForEntryPoint?: boolean;
   /** Documentation: https://esbuild.github.io/api/#pure */
   pure?: string[];
   /** Documentation: https://esbuild.github.io/api/#keep-names */

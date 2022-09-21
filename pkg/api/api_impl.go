@@ -982,6 +982,8 @@ func rebuildImpl(
 		Incremental:           buildOpts.Incremental,
 		ChangeFile:            buildOpts.ChangeFile,
 		Plugins:               plugins,
+
+		ExcludeExportsForEntryPoint:  buildOpts.ExcludeExportsForEntryPoint,
 	}
 	if options.MainFields != nil {
 		options.MainFields = append([]string{}, options.MainFields...)
