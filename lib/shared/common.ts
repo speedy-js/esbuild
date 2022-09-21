@@ -175,7 +175,7 @@ function pushCommonFlags(
   let sourcesContent = getFlag(options, keys, "sourcesContent", mustBeBoolean);
   let target = getFlag(options, keys, "target", mustBeStringOrArray);
   let format = getFlag(options, keys, "format", mustBeString);
-  let ExcludeExportsForEntryPoint = getFlag(
+  let ExcludeExportForEntry = getFlag(
     options,
     keys,
     "excludeExportsForEntryPoint",
@@ -227,8 +227,7 @@ function pushCommonFlags(
     else flags.push(`--target=${validateTarget(target)}`);
   }
   if (format) flags.push(`--format=${format}`);
-  if (ExcludeExportsForEntryPoint)
-    flags.push(`--exclude-exports-for-entry-point`);
+  if (ExcludeExportForEntry) flags.push(`--exclude-exports-for-entry-point`);
   if (globalName) flags.push(`--global-name=${globalName}`);
 
   if (minify) flags.push("--minify");

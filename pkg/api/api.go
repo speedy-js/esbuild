@@ -320,7 +320,7 @@ type BuildOptions struct {
 	ChunkNames string // Documentation: https://esbuild.github.io/api/#chunk-names
 	AssetNames string // Documentation: https://esbuild.github.io/api/#asset-names
 
-	ExcludeExportsForEntryPoint				bool
+	ExcludeExportForEntry bool
 
 	EntryPoints         []string     // Documentation: https://esbuild.github.io/api/#entry-points
 	EntryPointsAdvanced []EntryPoint // Documentation: https://esbuild.github.io/api/#entry-points
@@ -392,7 +392,7 @@ type TransformOptions struct {
 	Format     Format // Documentation: https://esbuild.github.io/api/#format
 	GlobalName string // Documentation: https://esbuild.github.io/api/#global-name
 
-	ExcludeExportsForEntryPoint			bool
+	ExcludeExportForEntry bool
 
 	MangleProps       string                 // Documentation: https://esbuild.github.io/api/#mangle-props
 	ReserveProps      string                 // Documentation: https://esbuild.github.io/api/#mangle-props

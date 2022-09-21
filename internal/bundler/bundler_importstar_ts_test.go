@@ -42,10 +42,10 @@ func TestExcludeExportsForEntryPoint(t *testing.T) {
 		},
 		entryPaths: []string{"/entry.tsx"},
 		options: config.Options{
-			Mode:          config.ModeBundle,
-			AbsOutputFile: "/out.js",
-			ExcludeExportsForEntryPoint:  true,
-			OutputFormat:  config.FormatCommonJS,
+			Mode:                  config.ModeBundle,
+			AbsOutputFile:         "/out.js",
+			ExcludeExportForEntry: true,
+			OutputFormat:          config.FormatCommonJS,
 		},
 	})
 }

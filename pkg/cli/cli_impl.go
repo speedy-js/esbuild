@@ -287,9 +287,9 @@ func parseOptionsImpl(
 			if value, err := parseBoolFlag(arg, true); err != nil {
 				return parseOptionsExtras{}, err
 			} else if buildOpts != nil {
-				buildOpts.ExcludeExportsForEntryPoint = value
+				buildOpts.ExcludeExportForEntry = value
 			} else {
-				transformOpts.ExcludeExportsForEntryPoint = value
+				transformOpts.ExcludeExportForEntry = value
 			}
 
 		case isBoolFlag(arg, "--ignore-annotations"):
