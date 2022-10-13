@@ -170,6 +170,7 @@ export interface ResolveResponse {
   warnings: types.Message[];
 
   path: string;
+  moduleType: number;
   external: boolean;
   sideEffects: boolean;
   namespace: string;
@@ -197,6 +198,7 @@ export interface OnResolveResponse {
   warnings?: types.PartialMessage[];
 
   path?: string;
+  moduleType?: number;
   external?: boolean;
   sideEffects?: boolean;
   namespace?: string;

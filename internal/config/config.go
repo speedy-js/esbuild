@@ -571,6 +571,7 @@ type OnResolveResult struct {
 	CacheDisable bool
 
 	Path             logger.Path
+	ModuleType       js_ast.ModuleType
 	External         bool
 	IsSideEffectFree bool
 }

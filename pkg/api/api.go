@@ -77,6 +77,8 @@
 //
 package api
 
+import "github.com/evanw/esbuild/internal/js_ast"
+
 type SourceMap uint8
 
 const (
@@ -509,6 +511,7 @@ type ResolveResult struct {
 	Warnings []Message
 
 	Path        string
+	ModuleType  int
 	External    bool
 	SideEffects bool
 	Namespace   string
@@ -542,6 +545,7 @@ type OnResolveResult struct {
 	Warnings []Message
 
 	Path         string
+	ModuleType   js_ast.ModuleType
 	External     bool
 	SideEffects  SideEffects
 	Namespace    string

@@ -957,6 +957,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
                       stash
                     ),
                     path: response!.path,
+                    moduleType: response!.moduleType,
                     external: response!.external,
                     sideEffects: response!.sideEffects,
                     namespace: response!.namespace,
@@ -1159,6 +1160,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
                   mustBeString
                 );
                 let path = getFlag(result, keys, "path", mustBeString);
+                let moduleType = getFlag(result, keys, "moduleType", mustBeInteger);
                 let namespace = getFlag(
                   result,
                   keys,
@@ -1203,6 +1205,7 @@ export function createChannel(streamIn: StreamIn): StreamOut {
                 response.id = id;
                 if (pluginName != null) response.pluginName = pluginName;
                 if (path != null) response.path = path;
+                if (moduleType != null) response.moduleType = moduleType;
                 if (namespace != null) response.namespace = namespace;
                 if (suffix != null) response.suffix = suffix;
                 if (external != null) response.external = external;
