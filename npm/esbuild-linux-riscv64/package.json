@@ -1,6 +1,6 @@
 {
   "name": "@speedy-js/esbuild-linux-riscv64",
-  "version": "0.14.28-speedy-lynx-0",
+  "version": "0.14.28-speedy-lynx-1",
   "description": "The Linux RISC-V 64-bit binary for esbuild, a JavaScript bundler.",
   "repository": "https://github.com/evanw/esbuild",
   "license": "MIT",
