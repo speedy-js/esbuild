@@ -50,6 +50,45 @@ func TestExcludeExportsForEntryPoint(t *testing.T) {
 	})
 }
 
+func TestExcludeExportsForEntryPointWithTwoClasses(t *testing.T) {
+	importstar_ts_suite.expectBundled(t, bundled{
+		files: map[string]string{
+			"/entry.tsx": `
+				class Test extends Component {
+					render(){
+						return <block>
+						<text>test1</text>
+						<text>test2</text>
+					</block>
+					}
+				}
+				
+				export default class Fake extends Component {
+					state = {
+						color: 'red',
+						flag: false
+					}
+					render() {
+						return (
+							<block>
+								<text>test</text>
+								<Test />
+							</block>
+						);
+					}
+				}
+			`,
+		},
+		entryPaths: []string{"/entry.tsx"},
+		options: config.Options{
+			Mode:                  config.ModeBundle,
+			AbsOutputFile:         "/out.js",
+			ExcludeExportForEntry: true,
+			OutputFormat:          config.FormatCommonJS,
+		},
+	})
+}
+
 func TestCommonClassExport(t *testing.T) {
 	importstar_ts_suite.expectBundled(t, bundled{
 		files: map[string]string{
