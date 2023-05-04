@@ -105,7 +105,7 @@ function pkgForSomeOtherPlatform(): string | null {
 }
 
 export function downloadedBinPath(pkg: string, subpath: string): string {
-  const esbuildLibDir = path.dirname(require.resolve('esbuild'))
+  const esbuildLibDir = path.dirname(require.resolve('@speedy-js/esbuild'))
   return path.join(esbuildLibDir, `downloaded-${pkg.replace('/', '-')}-${path.basename(subpath)}`)
 }
 
@@ -127,7 +127,7 @@ export function generateBinPath(): { binPath: string, isWASM: boolean } {
   try {
     // First check for the binary package from our "optionalDependencies". This
     // package should have been installed alongside this package at install time.
-    binPath = require.resolve(`${pkg.replace('@esbuild', '@speedy-js/esbuild')}/${subpath}`)
+    binPath = require.resolve(`${pkg.replace('@esbuild', '@speedy-js/esbuild')}-${subpath}`)
   } catch (e) {
     // If that didn't work, then someone probably installed esbuild with the
     // "--no-optional" flag. Our install script attempts to compensate for this

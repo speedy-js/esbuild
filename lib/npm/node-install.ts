@@ -104,7 +104,7 @@ function installUsingNPM(pkg: string, subpath: string, binPath: string): void {
 
   // Create a temporary directory inside the "esbuild" package with an empty
   // "package.json" file. We'll use this to run "npm install" in.
-  const esbuildLibDir = path.dirname(require.resolve('esbuild'))
+  const esbuildLibDir = path.dirname(require.resolve('@speedy-js/esbuild'))
   const installDir = path.join(esbuildLibDir, 'npm-install')
   fs.mkdirSync(installDir)
   try {
@@ -218,7 +218,7 @@ function maybeOptimizePackage(binPath: string): void {
 async function downloadDirectlyFromNPM(pkg: string, subpath: string, binPath: string): Promise<void> {
   // If that fails, the user could have npm configured incorrectly or could not
   // have npm installed. Try downloading directly from npm as a last resort.
-  const url = `https://registry.npmjs.org/${pkg}/-/${pkg.replace('@esbuild/', '')}-${versionFromPackageJSON}.tgz`
+  const url = `https://registry.npmjs.org/${pkg}/-/${pkg.replace('@speedy-js/esbuild/', '')}-${versionFromPackageJSON}.tgz`
   console.error(`[esbuild] Trying to download ${JSON.stringify(url)}`)
   try {
     fs.writeFileSync(binPath, extractFileFromTarGzip(await fetch(url), subpath))
@@ -248,7 +248,7 @@ async function checkAndPreparePackage(): Promise<void> {
   try {
     // First check for the binary package from our "optionalDependencies". This
     // package should have been installed alongside this package at install time.
-    binPath = require.resolve(`${pkg.replace('@esbuild', '@speedy-js/esbuild')}/${subpath}`)
+    binPath = require.resolve(`${pkg.replace('@esbuild', '@speedy-js/esbuild')}-${subpath}`)
   } catch (e) {
     console.error(`[esbuild] Failed to find package "${pkg}" on the file system
 

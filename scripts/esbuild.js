@@ -28,7 +28,7 @@ const buildNeutralLib = (esbuildPath) => {
     // making it seem like esbuild's install script code changes with every
     // esbuild release. So now we read it from "package.json" instead.
     // '--define:ESBUILD_VERSION=' + JSON.stringify(version),
-    '--external:esbuild',
+    '--external:@speedy-js/esbuild,esbuild',
     '--platform=node',
     '--log-level=warning',
   ], { cwd: repoDir })
@@ -41,7 +41,7 @@ const buildNeutralLib = (esbuildPath) => {
     '--target=' + nodeTarget,
     '--define:WASM=false',
     '--define:ESBUILD_VERSION=' + JSON.stringify(version),
-    '--external:esbuild',
+    '--external:@speedy-js/esbuild,esbuild',
     '--platform=node',
     '--log-level=warning',
   ], { cwd: repoDir })
@@ -76,7 +76,7 @@ const buildNeutralLib = (esbuildPath) => {
     ...platforms.exports.knownWindowsPackages,
     ...platforms.exports.knownUnixlikePackages,
     ...platforms.exports.knownWebAssemblyFallbackPackages,
-  }).sort().map(x => [x, version]))
+  }).sort().map(x => [x.replace('@esbuild/', '@speedy-js/esbuild-'), version]))
 
   // Update "npm/esbuild/package.json"
   const pjPath = path.join(npmDir, 'package.json')
@@ -329,10 +329,10 @@ exports.installForTests = () => {
   fs.mkdirSync(installDir)
   fs.writeFileSync(path.join(installDir, 'package.json'), '{}')
   childProcess.execSync(`npm pack --silent "${npmDir}"`, { cwd: installDir, stdio: 'inherit' })
-  childProcess.execSync(`npm install --silent --no-audit --no-optional --progress=false esbuild-${version}.tgz`, { cwd: installDir, env, stdio: 'inherit' })
+  childProcess.execSync(`npm install --silent --no-audit --no-optional --progress=false speedy-js-esbuild-${version}.tgz`, { cwd: installDir, env, stdio: 'inherit' })
 
   // Evaluate the code
-  const ESBUILD_PACKAGE_PATH = path.join(installDir, 'node_modules', 'esbuild')
+  const ESBUILD_PACKAGE_PATH = path.join(installDir, 'node_modules', '@speedy-js/esbuild')
   const mod = require(ESBUILD_PACKAGE_PATH)
   Object.defineProperty(mod, 'ESBUILD_PACKAGE_PATH', { value: ESBUILD_PACKAGE_PATH })
   return mod
