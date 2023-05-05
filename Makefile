@@ -432,76 +432,76 @@ publish-all: check-go-version
 	git push origin main "v$(ESBUILD_VERSION)"
 
 publish-win32-x64: platform-win32-x64
-	test -n "$(OTP)" && cd npm/@esbuild/win32-x64 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/win32-x64 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-win32-ia32: platform-win32-ia32
-	test -n "$(OTP)" && cd npm/@esbuild/win32-ia32 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/win32-ia32 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-win32-arm64: platform-win32-arm64
-	test -n "$(OTP)" && cd npm/@esbuild/win32-arm64 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/win32-arm64 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-android-x64: platform-android-x64
-	test -n "$(OTP)" && cd npm/@esbuild/android-x64 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/android-x64 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-android-arm: platform-android-arm
-	test -n "$(OTP)" && cd npm/@esbuild/android-arm && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/android-arm && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-android-arm64: platform-android-arm64
-	test -n "$(OTP)" && cd npm/@esbuild/android-arm64 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/android-arm64 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-darwin-x64: platform-darwin-x64
-	test -n "$(OTP)" && cd npm/@esbuild/darwin-x64 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/darwin-x64 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-darwin-arm64: platform-darwin-arm64
-	test -n "$(OTP)" && cd npm/@esbuild/darwin-arm64 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/darwin-arm64 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-freebsd-x64: platform-freebsd-x64
-	test -n "$(OTP)" && cd npm/@esbuild/freebsd-x64 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/freebsd-x64 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-freebsd-arm64: platform-freebsd-arm64
-	test -n "$(OTP)" && cd npm/@esbuild/freebsd-arm64 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/freebsd-arm64 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-netbsd-x64: platform-netbsd-x64
-	test -n "$(OTP)" && cd npm/@esbuild/netbsd-x64 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/netbsd-x64 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-openbsd-x64: platform-openbsd-x64
-	test -n "$(OTP)" && cd npm/@esbuild/openbsd-x64 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/openbsd-x64 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-linux-x64: platform-linux-x64
-	test -n "$(OTP)" && cd npm/@esbuild/linux-x64 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/linux-x64 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-linux-ia32: platform-linux-ia32
-	test -n "$(OTP)" && cd npm/@esbuild/linux-ia32 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/linux-ia32 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-linux-arm: platform-linux-arm
-	test -n "$(OTP)" && cd npm/@esbuild/linux-arm && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/linux-arm && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-linux-arm64: platform-linux-arm64
-	test -n "$(OTP)" && cd npm/@esbuild/linux-arm64 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/linux-arm64 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-linux-loong64: platform-linux-loong64
-	test -n "$(OTP)" && cd npm/@esbuild/linux-loong64 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/linux-loong64 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-linux-mips64el: platform-linux-mips64el
-	test -n "$(OTP)" && cd npm/@esbuild/linux-mips64el && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/linux-mips64el && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-linux-ppc64: platform-linux-ppc64
-	test -n "$(OTP)" && cd npm/@esbuild/linux-ppc64 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/linux-ppc64 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-linux-riscv64: platform-linux-riscv64
-	test -n "$(OTP)" && cd npm/@esbuild/linux-riscv64 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/linux-riscv64 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-linux-s390x: platform-linux-s390x
-	test -n "$(OTP)" && cd npm/@esbuild/linux-s390x && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/linux-s390x && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-sunos-x64: platform-sunos-x64
-	test -n "$(OTP)" && cd npm/@esbuild/sunos-x64 && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/@esbuild/sunos-x64 && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-wasm: platform-wasm
-	test -n "$(OTP)" && cd npm/esbuild-wasm && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/esbuild-wasm && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-neutral: platform-neutral
-	test -n "$(OTP)" && cd npm/esbuild && npm publish --otp="$(OTP) --tag lynx --access public"
+	test -n "$(OTP)" && cd npm/esbuild && npm publish --access public --otp="$(OTP)" --tag lynx
 
 publish-deno:
 	test -d deno/.git || (rm -fr deno && git clone git@github.com:esbuild/deno-esbuild.git deno)

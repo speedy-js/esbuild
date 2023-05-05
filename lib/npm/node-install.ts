@@ -248,7 +248,7 @@ async function checkAndPreparePackage(): Promise<void> {
   try {
     // First check for the binary package from our "optionalDependencies". This
     // package should have been installed alongside this package at install time.
-    binPath = require.resolve(`${pkg.replace('@esbuild', '@speedy-js/esbuild')}-${subpath}`)
+    binPath = require.resolve(`${pkg.replace('@esbuild/', '@speedy-js/esbuild-')}/${subpath}`);
   } catch (e) {
     console.error(`[esbuild] Failed to find package "${pkg}" on the file system
 
