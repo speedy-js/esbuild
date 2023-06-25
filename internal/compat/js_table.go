@@ -17,6 +17,7 @@ const (
 	Opera
 	Rhino
 	Safari
+	Vmsdk
 )
 
 func (e Engine) String() string {
@@ -45,6 +46,8 @@ func (e Engine) String() string {
 		return "rhino"
 	case Safari:
 		return "safari"
+	case Vmsdk:
+		return "vmsdk"
 	}
 	return ""
 }
@@ -202,6 +205,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{6, 0, 0}}},
 		Opera:   {{start: v{36, 0, 0}}},
 		Safari:  {{start: v{10, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	AsyncAwait: {
 		Chrome:  {{start: v{55, 0, 0}}},
@@ -213,6 +217,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{7, 6, 0}}},
 		Opera:   {{start: v{42, 0, 0}}},
 		Safari:  {{start: v{11, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	AsyncGenerator: {
 		Chrome:  {{start: v{63, 0, 0}}},
@@ -224,6 +229,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{10, 0, 0}}},
 		Opera:   {{start: v{50, 0, 0}}},
 		Safari:  {{start: v{12, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	Bigint: {
 		Chrome:  {{start: v{67, 0, 0}}},
@@ -248,6 +254,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{6, 0, 0}}},
 		Opera:   {{start: v{36, 0, 0}}},
 		Safari:  {{start: v{10, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	ClassField: {
 		Chrome:  {{start: v{73, 0, 0}}},
@@ -259,6 +266,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{12, 0, 0}}},
 		Opera:   {{start: v{60, 0, 0}}},
 		Safari:  {{start: v{14, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	ClassPrivateAccessor: {
 		Chrome:  {{start: v{84, 0, 0}}},
@@ -270,6 +278,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{14, 6, 0}}},
 		Opera:   {{start: v{70, 0, 0}}},
 		Safari:  {{start: v{15, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	ClassPrivateBrandCheck: {
 		Chrome:  {{start: v{91, 0, 0}}},
@@ -292,6 +301,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{14, 6, 0}}},
 		Opera:   {{start: v{70, 0, 0}}},
 		Safari:  {{start: v{14, 1, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	ClassPrivateMethod: {
 		Chrome:  {{start: v{84, 0, 0}}},
@@ -303,6 +313,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{14, 6, 0}}},
 		Opera:   {{start: v{70, 0, 0}}},
 		Safari:  {{start: v{15, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	ClassPrivateStaticAccessor: {
 		Chrome:  {{start: v{84, 0, 0}}},
@@ -314,6 +325,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{14, 6, 0}}},
 		Opera:   {{start: v{70, 0, 0}}},
 		Safari:  {{start: v{15, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	ClassPrivateStaticField: {
 		Chrome:  {{start: v{74, 0, 0}}},
@@ -325,6 +337,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{12, 0, 0}}},
 		Opera:   {{start: v{62, 0, 0}}},
 		Safari:  {{start: v{14, 1, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	ClassPrivateStaticMethod: {
 		Chrome:  {{start: v{84, 0, 0}}},
@@ -336,6 +349,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{14, 6, 0}}},
 		Opera:   {{start: v{70, 0, 0}}},
 		Safari:  {{start: v{15, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	ClassStaticBlocks: {
 		Chrome:  {{start: v{91, 0, 0}}},
@@ -355,6 +369,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{12, 0, 0}}},
 		Opera:   {{start: v{60, 0, 0}}},
 		Safari:  {{start: v{14, 1, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	ConstAndLet: {
 		Chrome:  {{start: v{49, 0, 0}}},
@@ -366,6 +381,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{6, 0, 0}}},
 		Opera:   {{start: v{36, 0, 0}}},
 		Safari:  {{start: v{11, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	Decorators: {},
 	DefaultArgument: {
@@ -378,6 +394,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{6, 0, 0}}},
 		Opera:   {{start: v{36, 0, 0}}},
 		Safari:  {{start: v{10, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	Destructuring: {
 		Chrome:  {{start: v{51, 0, 0}}},
@@ -390,11 +407,12 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{6, 5, 0}}},
 		Opera:   {{start: v{38, 0, 0}}},
 		Safari:  {{start: v{10, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	DynamicImport: {
 		Chrome:  {{start: v{63, 0, 0}}},
 		Edge:    {{start: v{79, 0, 0}}},
-		ES:      {{start: v{5, 0, 0}}},
+		ES:      {{start: v{2015, 0, 0}}},
 		Firefox: {{start: v{67, 0, 0}}},
 		IOS:     {{start: v{11, 0, 0}}},
 		Node:    {{start: v{12, 20, 0}, end: v{13, 0, 0}}, {start: v{13, 2, 0}}},
@@ -413,6 +431,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Opera:   {{start: v{39, 0, 0}}},
 		Rhino:   {{start: v{1, 7, 14}}},
 		Safari:  {{start: v{10, 1, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	ExportStarAs: {
 		Chrome:  {{start: v{72, 0, 0}}},
@@ -432,6 +451,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{10, 0, 0}}},
 		Opera:   {{start: v{50, 0, 0}}},
 		Safari:  {{start: v{12, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	ForOf: {
 		Chrome:  {{start: v{51, 0, 0}}},
@@ -444,6 +464,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{6, 5, 0}}},
 		Opera:   {{start: v{38, 0, 0}}},
 		Safari:  {{start: v{10, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	Generator: {
 		Chrome:  {{start: v{50, 0, 0}}},
@@ -455,6 +476,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{6, 0, 0}}},
 		Opera:   {{start: v{37, 0, 0}}},
 		Safari:  {{start: v{10, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	Hashbang: {
 		Chrome:  {{start: v{74, 0, 0}}},
@@ -466,6 +488,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{12, 5, 0}}},
 		Opera:   {{start: v{62, 0, 0}}},
 		Safari:  {{start: v{13, 1, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	ImportAssertions: {
 		Chrome: {{start: v{91, 0, 0}}},
@@ -505,6 +528,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{6, 0, 0}}},
 		Opera:   {{start: v{36, 0, 0}}},
 		Safari:  {{start: v{10, 1, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	NewTarget: {
 		Chrome:  {{start: v{46, 0, 0}}},
@@ -517,6 +541,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{5, 0, 0}}},
 		Opera:   {{start: v{33, 0, 0}}},
 		Safari:  {{start: v{10, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	NodeColonPrefixImport: {
 		Node: {{start: v{12, 20, 0}, end: v{13, 0, 0}}, {start: v{14, 13, 1}}},
@@ -549,6 +574,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Opera:   {{start: v{10, 10, 0}}},
 		Rhino:   {{start: v{1, 7, 13}}},
 		Safari:  {{start: v{3, 1, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	ObjectExtensions: {
 		Chrome:  {{start: v{44, 0, 0}}},
@@ -561,6 +587,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{4, 0, 0}}},
 		Opera:   {{start: v{31, 0, 0}}},
 		Safari:  {{start: v{10, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	ObjectRestSpread: {
 		Chrome:  {{start: v{60, 0, 0}}},
@@ -573,6 +600,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{8, 3, 0}}},
 		Opera:   {{start: v{47, 0, 0}}},
 		Safari:  {{start: v{11, 1, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	OptionalCatchBinding: {
 		Chrome:  {{start: v{66, 0, 0}}},
@@ -585,6 +613,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{10, 0, 0}}},
 		Opera:   {{start: v{53, 0, 0}}},
 		Safari:  {{start: v{11, 1, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	OptionalChain: {
 		Chrome:  {{start: v{91, 0, 0}}},
@@ -597,6 +626,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{16, 1, 0}}},
 		Opera:   {{start: v{77, 0, 0}}},
 		Safari:  {{start: v{13, 1, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	RegexpDotAllFlag: {
 		Chrome:  {{start: v{62, 0, 0}}},
@@ -609,6 +639,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{8, 10, 0}}},
 		Opera:   {{start: v{49, 0, 0}}},
 		Safari:  {{start: v{11, 1, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	RegexpLookbehindAssertions: {
 		Chrome:  {{start: v{62, 0, 0}}},
@@ -619,6 +650,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Hermes:  {{start: v{0, 7, 0}}},
 		Node:    {{start: v{8, 10, 0}}},
 		Opera:   {{start: v{49, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	RegexpMatchIndices: {
 		Chrome:  {{start: v{90, 0, 0}}},
@@ -639,6 +671,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{10, 0, 0}}},
 		Opera:   {{start: v{51, 0, 0}}},
 		Safari:  {{start: v{11, 1, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	RegexpSetNotation: {},
 	RegexpStickyAndUnicodeFlags: {
@@ -652,6 +685,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{6, 0, 0}}},
 		Opera:   {{start: v{37, 0, 0}}},
 		Safari:  {{start: v{12, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	RegexpUnicodePropertyEscapes: {
 		Chrome:  {{start: v{64, 0, 0}}},
@@ -663,6 +697,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{10, 0, 0}}},
 		Opera:   {{start: v{51, 0, 0}}},
 		Safari:  {{start: v{11, 1, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	RestArgument: {
 		Chrome:  {{start: v{47, 0, 0}}},
@@ -685,6 +720,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{10, 0, 0}}},
 		Opera:   {{start: v{28, 0, 0}}},
 		Safari:  {{start: v{9, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 	TopLevelAwait: {
 		Chrome:  {{start: v{89, 0, 0}}},
@@ -717,6 +753,7 @@ var jsTable = map[JSFeature]map[Engine][]versionRange{
 		Node:    {{start: v{4, 0, 0}}},
 		Opera:   {{start: v{31, 0, 0}}},
 		Safari:  {{start: v{9, 0, 0}}},
+		Vmsdk:   {{start: v{2, 3, 0}}},
 	},
 }
 

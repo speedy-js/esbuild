@@ -100,6 +100,7 @@ const engines = [
   'deno',
   'hermes',
   'rhino',
+  'vmsdk',
 ]
 
 function getValueOfTest(value) {

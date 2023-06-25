@@ -16,4 +16,5 @@ var validEngines = map[string]api.EngineName{
 	"opera":   api.EngineOpera,
 	"rhino":   api.EngineRhino,
 	"safari":  api.EngineSafari,
+	"vmsdk":   api.EngineVmsdk,
 }

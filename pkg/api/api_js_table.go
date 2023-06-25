@@ -18,6 +18,7 @@ const (
 	EngineDeno
 	EngineHermes
 	EngineRhino
+	EngineVmsdk
 )
 
 func convertEngineName(engine EngineName) compat.Engine {
@@ -44,6 +45,8 @@ func convertEngineName(engine EngineName) compat.Engine {
 		return compat.Hermes
 	case EngineRhino:
 		return compat.Rhino
+	case EngineVmsdk:
+		return compat.Vmsdk
 	default:
 		panic("Invalid engine name")
 	}
