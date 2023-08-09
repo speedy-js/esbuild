@@ -1,3 +1,3 @@
 package main
 
-const esbuildVersion = "0.17.18-lynx.2"
+const esbuildVersion = "0.17.18-lynx.4"

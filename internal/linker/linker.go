@@ -88,6 +88,9 @@ type chunkInfo struct {
 	// For code splitting
 	crossChunkImports []chunkImport
 
+	// This is the total size of input files
+	chunkSize int
+
 	// This is the representation-specific information
 	chunkRepr chunkRepr
 
@@ -3119,6 +3122,7 @@ func (c *linkerContext) computeChunks() {
 
 	jsChunks := make(map[string]chunkInfo)
 	cssChunks := make(map[string]chunkInfo)
+	entryKeys := make([]string, 0, len(c.graph.EntryPoints()))
 
 	// Create chunks for entry points
 	for i, entryPoint := range c.graph.EntryPoints() {
@@ -3134,8 +3138,10 @@ func (c *linkerContext) computeChunks() {
 			isEntryPoint:          true,
 			sourceIndex:           entryPoint.SourceIndex,
 			entryPointBit:         uint(i),
+			chunkSize:             0,
 			filesWithPartsInChunk: make(map[uint32]bool),
 		}
+		entryKeys = append(entryKeys, key)
 
 		switch file.InputFile.Repr.(type) {
 		case *graph.JSRepr:
@@ -3166,6 +3172,7 @@ func (c *linkerContext) computeChunks() {
 						externalImportsInOrder: externalOrder,
 						filesInChunkInOrder:    internalOrder,
 					},
+					chunkSize: 0,
 				}
 				chunkRepr.hasCSSChunk = true
 			}
@@ -3193,10 +3200,35 @@ func (c *linkerContext) computeChunks() {
 					chunk.entryBits = file.EntryBits
 					chunk.filesWithPartsInChunk = make(map[uint32]bool)
 					chunk.chunkRepr = &chunkReprJS{}
+					chunk.chunkSize = 0
 					jsChunks[key] = chunk
 				}
 				chunk.filesWithPartsInChunk[uint32(sourceIndex)] = true
 			}
+		}
+	}
+
+	// remove chunks by user configuration. This matters because auto code splitting
+	// may generate lots of mini chunks
+	for key := range jsChunks {
+		jsChunk := jsChunks[key]
+		// calculate each jsChunk's size
+		for sourceIdx := range jsChunk.filesWithPartsInChunk {
+			jsChunk.chunkSize += len(c.graph.Files[sourceIdx].InputFile.Source.Contents)
+		}
+		// If current js chunk is smaller than the minimal chunkSize config, mark this file as SplitOff
+		// and move it to the entryChunks it belongs to
+		if !jsChunk.isEntryPoint && jsChunk.chunkSize < c.options.MinChunkSize {
+			for _, entryKey := range entryKeys {
+				entryChunk := jsChunks[entryKey]
+				if jsChunk.entryBits.HasBit(entryChunk.entryPointBit) {
+					for sourceIdx := range jsChunk.filesWithPartsInChunk {
+						c.graph.Files[sourceIdx].SplitOff = true
+						entryChunk.filesWithPartsInChunk[sourceIdx] = true
+					}
+				}
+			}
+			delete(jsChunks, key)
 		}
 	}
 
@@ -3413,7 +3445,7 @@ func (c *linkerContext) findImportedPartsInJSOrder(chunk *chunkInfo) (js []uint3
 		file := &c.graph.Files[sourceIndex]
 
 		if repr, ok := file.InputFile.Repr.(*graph.JSRepr); ok {
-			isFileInThisChunk := chunk.entryBits.Equals(file.EntryBits)
+			isFileInThisChunk := file.SplitOff || chunk.entryBits.Equals(file.EntryBits)
 
 			// Wrapped files can't be split because they are all inside the wrapper
 			canFileBeSplit := repr.Meta.Wrap == graph.WrapNone
